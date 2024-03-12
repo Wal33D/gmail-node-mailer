@@ -1,5 +1,5 @@
 {
-  "name": "email-service-package",
+  "name": "gmail-node-mailer-package",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
