@@ -1,0 +1,29 @@
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore Visual Studio Code folder
+.vscode/*
+
+# Ignore .NET specific folders
+**/Debug/**
+**/project-cache/**
+**/.vs/**
+**/obj/**
+
+# Ignore Node modules
+node_modules/
+
+# Ignore environment configuration files
+.env.local
+
+# Ignore zip archives
+*.zip
+
+# Ignore the private directory
+private/**
+
+# Ignore TypeScript configuration
+tsconfig.json
+
+# DO NOT ignore the build directory
+!dist/
