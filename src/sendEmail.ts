@@ -1,3 +1,4 @@
+// src/sendEmail.ts
 import { ISendEmailResponse } from "../types/typeDefs";
 
 export async function sendEmail({
