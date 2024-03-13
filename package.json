@@ -1,8 +1,8 @@
 {
   "name": "gmail-node-mailer",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "tsc",

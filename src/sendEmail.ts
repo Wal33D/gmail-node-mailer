@@ -1,5 +1,5 @@
 // src/sendEmail.ts
-import { ISendEmailResponse } from "../types/typeDefs";
+import { ISendEmailResponse } from '../types';
 
 export async function sendEmail({
   senderEmail = process.env.GMAIL_USER as string,

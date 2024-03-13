@@ -29,11 +29,6 @@ dist/**
 # Ignore zip files, often used for archiving or distribution
 *.zip
 
-# Ignore the private directory
-# private/ may contain sensitive data or configuration not meant for version control
-private/**
-!private/.gitkeep
-
 # Ignore TypeScript configuration file
 # tsconfig.json is used to configure TypeScript compiler options
 tsconfig.json

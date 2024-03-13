@@ -1,7 +1,7 @@
 // src/initializeClient.ts
 import { google } from 'googleapis';
 
-const storedServiceAccount = require('./private/service_account.json');
+const storedServiceAccount = require('./private/gmail_service_account.json');
 const storedSenderEmail = process.env.GMAIL_USER as string;
 
 export async function initializeClient({

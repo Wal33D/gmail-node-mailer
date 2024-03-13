@@ -19,11 +19,5 @@ node_modules/
 # Ignore zip archives
 *.zip
 
-# Ignore the private directory
-private/**
-
 # Ignore TypeScript configuration
 tsconfig.json
-
-# Ignore the build directory
-dist/**
