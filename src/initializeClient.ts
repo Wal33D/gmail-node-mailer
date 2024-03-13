@@ -3,7 +3,7 @@ import * as path from 'path';
 import { google } from 'googleapis';
 import { readFileSync } from 'fs';
 import { isValidEmail } from './utils/isValidEmail';
-import { IInitializeClientParams, IInitializeClientResult} from './types/types';
+import { IInitializeClientParams, IInitializeClientResult} from './types';
 
 // The initializeClient function with types applied
 export async function initializeClient({
