@@ -1,17 +1,28 @@
+// Importing necessary modules
 import { google } from 'googleapis';
 import { readFileSync } from 'fs';
 import * as path from 'path';
+import { IInitializeClientParams, IInitializeClientResult} from './types';
 
+// Function to validate email pattern
+function isValidEmail(email: string): boolean {
+    const regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regexPattern.test(email);
+}
+
+// The initializeClient function with types applied
 export async function initializeClient({
-    gmailServiceAccount = process.env.GMAIL_SERVICE_ACCOUNT,
+    gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT || '{}'),
     gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH,
     gmailSenderEmail = process.env.GMAIL_USER,
-}: {
-    gmailServiceAccount?: any;
-    gmailServiceAccountPath?: string;
-    gmailSenderEmail?: string;
-} = {}) {
+}: IInitializeClientParams): Promise<IInitializeClientResult> {
     try {
+        // Validate the sender's email
+        if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
+            throw new Error("Invalid or missing Gmail sender's email.");
+        }
+
+        // Load the service account from the path if not directly provided
         if (!gmailServiceAccount && gmailServiceAccountPath) {
             const absolutePath = path.resolve(gmailServiceAccountPath);
             gmailServiceAccount = JSON.parse(readFileSync(absolutePath, 'utf-8'));
@@ -19,6 +30,7 @@ export async function initializeClient({
             throw new Error("Gmail service account data or path to the JSON file must be provided.");
         }
 
+        // Initialize the JWT client with the service account credentials
         const jwtClient = new google.auth.JWT(
             gmailServiceAccount.client_email,
             undefined,
@@ -27,19 +39,22 @@ export async function initializeClient({
             gmailSenderEmail,
         );
 
+        // Authorize and create the Gmail client
         await jwtClient.authorize();
+        const gmailClient = google.gmail({ version: 'v1', auth: jwtClient });
 
-        const gmail = google.gmail({ version: 'v1', auth: jwtClient });
+        // Return success state
         return {
             status: true,
-            gmailClient: gmail,
+            gmailClient,
             message: "Success: Gmail API client initialized successfully."
         };
     } catch (error: any) {
+        // Return failure state with error message
         return {
             status: false,
             gmailClient: null,
-            message: `Error: Failed to initialize Gmail API client. ${error.message}`
+            message: `Error: ${error.message}`
         };
     }
 }
