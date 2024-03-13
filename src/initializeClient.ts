@@ -2,13 +2,10 @@
 import { google } from 'googleapis';
 import { readFileSync } from 'fs';
 import * as path from 'path';
-import { IInitializeClientParams, IInitializeClientResult} from './types';
+import { isValidEmail } from './utils/isValidEmail';
+import { IInitializeClientParams, IInitializeClientResult} from './types/types';
 
-// Function to validate email pattern
-function isValidEmail(email: string): boolean {
-    const regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regexPattern.test(email);
-}
+
 
 // The initializeClient function with types applied
 export async function initializeClient({

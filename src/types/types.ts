@@ -1,4 +1,4 @@
-// ./types/email.ts
+// ./src/types.ts
 import { google } from 'googleapis';
 
 export interface ISendEmailResponse {
