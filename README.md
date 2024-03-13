@@ -11,13 +11,13 @@ This Node.js package simplifies sending emails using the Gmail API. It wraps the
 ## Installation
 
 \`\`\`bash
-npm install gmail-node-mailer-package
+npm install gmail-node-mailer
 \`\`\`
 
 Or if you prefer using Yarn:
 
 \`\`\`bash
-yarn add gmail-node-mailer-package
+yarn add gmail-node-mailer
 \`\`\`
 
 ## Quick Start
@@ -41,7 +41,7 @@ Replace \`your_email@example.com\` with the email address of the Google account 
    Import and call \`initializeClient\` at the start of your application. This function initializes the Gmail API client using credentials from your service account JSON file and the sender email from your environment variables.
 
    \`\`\`javascript
-   import { initializeClient } from 'gmail-node-mailer-package';
+   import { initializeClient } from 'gmail-node-mailer';
 
    const emailClient = await initializeClient();
    \`\`\`
@@ -51,13 +51,13 @@ Replace \`your_email@example.com\` with the email address of the Google account 
    Once the client is initialized, you can send emails using the \`sendEmail\` function.
 
    \`\`\`javascript
-   import { sendEmail } from 'gmail-node-mailer-package';
+   import { sendEmail } from 'gmail-node-mailer';
 
    const emailResponse = await sendEmail({
      senderEmail: 'your_email@example.com',
      recipientEmail: 'recipient@example.com',
      subject: 'Hello World',
-     message: 'This is a test email sent from gmail-node-mailer-package.'
+     message: 'This is a test email sent from gmail-node-mailer.'
    });
 
    console.log(emailResponse);

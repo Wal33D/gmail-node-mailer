@@ -2,4 +2,3 @@
 export { sendEmail } from './sendEmail';
 export { initializeClient } from './initializeClient';
 export { ISendEmailResponse } from '../types/typeDefs';
-

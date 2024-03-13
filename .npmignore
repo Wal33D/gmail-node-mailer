@@ -25,5 +25,5 @@ private/**
 # Ignore TypeScript configuration
 tsconfig.json
 
-# DO NOT ignore the build directory
-!dist/
+# Ignore the build directory
+dist/**
