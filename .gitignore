@@ -2,17 +2,7 @@
 .DS_Store
 
 # Ignore Visual Studio Code workspace settings
-.vscode/*
-
-# Ignore .NET specific build and cache directories
-# Debug folders often contain build output
-**/Debug/**
-# Project specific cache used by some .NET projects
-**/project-cache/**
-# Visual Studio temporary files
-**/.vs/**
-# Object files, can be generated as part of the build
-**/obj/**
+.vscode/
 
 # Ignore Node.js modules directory
 # node_modules folders contain your project's npm dependencies
@@ -23,12 +13,5 @@ node_modules/
 dist/**
 !dist/.gitkeep
 
-# Ignore environment configuration files and archives
-# .env.local can contain local environment-specific variables
-.env.local
 # Ignore zip files, often used for archiving or distribution
 *.zip
-
-# Ignore TypeScript configuration file
-# tsconfig.json is used to configure TypeScript compiler options
-tsconfig.json

@@ -1,4 +1,4 @@
-// src/index.ts
-export { sendEmail } from './sendEmail';
-export { initializeClient } from './initializeClient';
-export { ISendEmailResponse } from '../types/typeDefs';
+// ./src/index.ts
+export {sendEmail} from './sendEmail';
+export {initializeClient} from './initializeClient';
+export {ISendEmailResponse} from './email';
