@@ -1,11 +1,9 @@
 // Importing necessary modules
+import * as path from 'path';
 import { google } from 'googleapis';
 import { readFileSync } from 'fs';
-import * as path from 'path';
 import { isValidEmail } from './utils/isValidEmail';
 import { IInitializeClientParams, IInitializeClientResult} from './types/types';
-
-
 
 // The initializeClient function with types applied
 export async function initializeClient({
