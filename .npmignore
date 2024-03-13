@@ -4,20 +4,5 @@
 # Ignore Visual Studio Code folder
 .vscode/*
 
-# Ignore .NET specific folders
-**/Debug/**
-**/project-cache/**
-**/.vs/**
-**/obj/**
-
-# Ignore Node modules
-node_modules/
-
-# Ignore environment configuration files
-.env.local
-
 # Ignore zip archives
 *.zip
-
-# Ignore TypeScript configuration
-tsconfig.json
