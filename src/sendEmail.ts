@@ -24,7 +24,7 @@ export async function sendEmail({
 
   try {
     //@ts-ignore
-    const response = await global.emailClient.users.messages.send({
+    const response = await global.gmailClient.users.messages.send({
       userId: 'me',
       requestBody: {
         raw: rawEmail,
