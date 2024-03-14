@@ -45,6 +45,7 @@ export async function initializeClient({
             message: "Success: Gmail API client initialized successfully."
         };
     } catch (error: any) {
+        console.log("ooops")
         // Return failure state with error message
         return {
             status: false,
