@@ -1,6 +1,6 @@
 {
   "name": "gmail-node-mailer",
-  "version": "1.6.59",
+  "version": "1.6.6",
   "description": "",
   "main": "dist/index.js",
   "scripts": {

@@ -1,2 +1,2 @@
 // ./src/index.ts
-export { GmailMailer } from './gmailer';
+export { GmailMailer } from './GmailMailer';
