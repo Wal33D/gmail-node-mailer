@@ -1,8 +1,8 @@
+import { gmail_v1 } from 'googleapis';
 import { GmailMailer } from '../GmailMailer';
-import { ISendEmailParams } from '../types'; // Ensure the path is correct
+import { ISendEmailParams } from '../types';
 
-// Define mockGmailClient with the mocked send function
-const mockGmailClient = {
+const mockGmailClient: Partial<gmail_v1.Gmail> = {
   users: {
     messages: {
       send: jest.fn().mockResolvedValue({
@@ -13,10 +13,11 @@ const mockGmailClient = {
   },
 };
 
+
 describe('GmailMailer', () => {
   describe('initializeClient', () => {
     it('should initialize the Gmail client successfully', async () => {
-      const gmailMailer = new GmailMailer(mockGmailClient); // Use the mock client
+      const gmailMailer = new GmailMailer(mockGmailClient as gmail_v1.Gmail); // If necessary, assert the type
       const mockServiceAccount = {
         client_email: 'test@example.com',
         private_key: `-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n`,
@@ -37,20 +38,20 @@ describe('GmailMailer', () => {
 
   describe('sendEmailWrapper', () => {
     it('should send an email successfully', async () => {
-      // Initialize GmailMailer with the mocked Gmail client
-      const gmailMailer = new GmailMailer(mockGmailClient);
-
+      // Correctly initialize GmailMailer with the mocked Gmail client
+      const gmailMailer = new GmailMailer(mockGmailClient as gmail_v1.Gmail);
+  
       const emailParams: ISendEmailParams = {
-        // Assuming senderEmail is optional and can use a default or previously set value
+        senderEmail: 'sender@example.com',
         recipientEmail: 'recipient@example.com',
         subject: 'Test Subject',
         message: 'This is a test email.',
       };
-
+  
       await expect(gmailMailer.sendEmailWrapper(emailParams)).resolves.toEqual({
         status: true,
         message: "Email successfully sent to recipient@example.com.",
       });
     });
   });
-});
+  
