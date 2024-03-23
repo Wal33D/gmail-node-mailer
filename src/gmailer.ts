@@ -32,7 +32,6 @@ export interface IGmailServiceAccount {
     private_key: string;
     client_email: string;
 }
-
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
@@ -46,10 +45,9 @@ export class GmailMailer {
         }
     }
 
-
     async initializeClient({
-        gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT as any),
-        gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH as any,
+        gmailServiceAccount,
+        gmailServiceAccountPath,
         gmailSenderEmail = process.env.GMAIL_USER,
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
@@ -57,11 +55,20 @@ export class GmailMailer {
                 throw new Error("Invalid or missing Gmail sender's email.");
             }
 
+            let serviceAccountResult;
+
             if (!gmailServiceAccount && gmailServiceAccountPath) {
-                // Use the new parseServiceAccountFile method
-                gmailServiceAccount = await this.parseServiceAccountFile(gmailServiceAccountPath);
-            } else if (!gmailServiceAccount) {
-                throw new Error("Gmail service account data must be provided either directly or through a file path.");
+                serviceAccountResult = await this.parseServiceAccountFile({ filePath: gmailServiceAccountPath });
+                if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
+                    throw new Error("Failed to parse Gmail service account file.");
+                }
+                gmailServiceAccount = serviceAccountResult.serviceAccount;
+            } else if (!gmailServiceAccount && !gmailServiceAccountPath) {
+                throw new Error("Gmail service account data or path to the JSON file must be provided.");
+            }
+
+            if (!gmailServiceAccount) {
+                throw new Error("Gmail service account configuration is missing.");
             }
 
             const jwtClient = new google.auth.JWT(
