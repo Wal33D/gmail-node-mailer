@@ -4,26 +4,30 @@ import { google, gmail_v1 } from 'googleapis';
 import { readFileSync } from 'fs';
 import { isValidEmail } from './utils/isValidEmail';
 
+export interface ISendEmailParams {
+    senderEmail: string;
+    recipientEmail: string;
+    subject: string;
+    message: string;
+}
+
 export interface ISendEmailResponse {
     sent: boolean;
     status: number;
     message: string;
 };
 
-// Interface for the parameters accepted by the initializeClient function remains the same
 export interface IInitializeClientParams {
     gmailServiceAccount?: IGmailServiceAccount;
     gmailServiceAccountPath?: string;
     gmailSenderEmail?: string;
 }
 
-// Interface for the function's return type remains the same
 export interface IInitializeClientResult {
     status: boolean;
     gmailClient: typeof google.gmail_v1.Gmail | null;
     message: string;
 }
-// Interface for the Gmail service account credentials
 export interface IGmailServiceAccount {
     private_key: string;
     client_email: string;
@@ -32,9 +36,19 @@ export interface IGmailServiceAccount {
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
+    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; credentials: IGmailServiceAccount | null }> {
+        try {
+            const absolutePath = path.resolve(filePath);
+            const fileContents = readFileSync(absolutePath, 'utf-8');
+            return { status: true, credentials: JSON.parse(fileContents) };
+        } catch (error) {
+            return { status: false, credentials: null };
+        }
+    }
+
     async initializeClient({
-        gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT || '{}'),
-        gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH,
+        gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT as any),
+        gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH as any,
         gmailSenderEmail = process.env.GMAIL_USER,
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
@@ -43,8 +57,7 @@ export class GmailMailer {
             }
 
             if (!gmailServiceAccount && gmailServiceAccountPath) {
-                const absolutePath = path.resolve(gmailServiceAccountPath);
-                gmailServiceAccount = JSON.parse(readFileSync(absolutePath, 'utf-8'));
+                gmailServiceAccount = await this.parseServiceAccountFile({ filePath: gmailServiceAccountPath });
             } else if (!gmailServiceAccount && !gmailServiceAccountPath) {
                 throw new Error("Gmail service account data or path to the JSON file must be provided.");
             }
@@ -79,12 +92,7 @@ export class GmailMailer {
         recipientEmail,
         subject,
         message,
-    }: {
-        senderEmail: string;
-        recipientEmail: string;
-        subject: string;
-        message: string;
-    }): Promise<ISendEmailResponse> {
+    }: ISendEmailParams): Promise<ISendEmailResponse> {
         if (!this.gmailClient) {
             throw new Error('Gmail client is not initialized. Call initializeClient first.');
         }
