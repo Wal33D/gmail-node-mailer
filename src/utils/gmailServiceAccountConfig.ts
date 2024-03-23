@@ -22,3 +22,4 @@ class GmailServiceAccountConfig {
 }
 
 export const gmailServiceAccountConfig = new GmailServiceAccountConfig();
+

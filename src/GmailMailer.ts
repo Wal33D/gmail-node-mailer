@@ -3,7 +3,7 @@ import { sendEmail } from './sendEmail';
 import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import { emailConfig } from './utils/emailConfig';
-import { gmailServiceAccountConfig } from './utils/gmailServiceAccountConfig'; // Import the new config
+import { gmailServiceAccountConfig } from './utils/gmailServiceAccountConfig'; 
 import {
     IGmailServiceAccount,
     IInitializeClientParams,
@@ -17,7 +17,7 @@ export class GmailMailer {
     async initializeClient({
         gmailServiceAccount = gmailServiceAccountConfig.get_SERVICE_ACCOUNT() as IGmailServiceAccount,
         gmailServiceAccountPath = gmailServiceAccountConfig.get_SERVICE_ACCOUNT_PATH(),
-        gmailSenderEmail = emailConfig.GMAIL_SENDER_EMAIL,
+        gmailSenderEmail = emailConfig.get_GMAIL_SENDER_EMAIL,
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
@@ -39,7 +39,7 @@ export class GmailMailer {
             }
 
             // Update the email config using its setter
-            emailConfig.GMAIL_SENDER_EMAIL = gmailSenderEmail;
+            emailConfig.set_GMAIL_SENDER_EMAIL(gmailSenderEmail);
 
             const jwtClient = new google.auth.JWT(
                 gmailServiceAccount.client_email,
