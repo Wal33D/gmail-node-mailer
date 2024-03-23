@@ -1,10 +1,8 @@
-// Assuming this mock setup is already provided at the top of your test file
-
 import { GmailMailer } from '../GmailMailer';
 import { ISendEmailParams } from '../types'; // Ensure the path is correct
 
 describe('GmailMailer', () => {
-  let mockGmailClient: any; // You can type this more strictly if you prefer
+  let mockGmailClient: any; // Adjust the typing as needed
 
   beforeEach(() => {
     // Setup the mockGmailClient with the necessary mocked functions
@@ -23,6 +21,7 @@ describe('GmailMailer', () => {
         client_email: 'test@example.com',
         private_key: '-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n',
       };
+      const gmailMailer = new GmailMailer(mockGmailClient); // Inject the mock
 
       await expect(gmailMailer.initializeClient({
         gmailServiceAccount: mockServiceAccount,
@@ -38,9 +37,9 @@ describe('GmailMailer', () => {
   describe('sendEmailWrapper', () => {
     it('should send an email successfully', async () => {
       const gmailMailer = new GmailMailer(mockGmailClient); // Inject the mock
-
+      
       const emailParams: ISendEmailParams = {
-        senderEmail: 'sender@example.com', // This should match what's used in initialization
+        senderEmail: 'sender@example.com', // Assuming this email is configured if needed
         recipientEmail: 'recipient@example.com',
         subject: 'Test Subject',
         message: 'This is a test email.',
