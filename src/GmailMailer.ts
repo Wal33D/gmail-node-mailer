@@ -1,5 +1,5 @@
 import { google, gmail_v1 } from 'googleapis';
-import { sendEmail } from './sendEmail'; 
+import { sendEmail } from './sendEmail';
 import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import {
@@ -8,15 +8,27 @@ import {
     ISendEmailResponse
 } from './types';
 
-const DEFAULT_GMAIL_SENDER_EMAIL = process.env.GMAIL_USER;
-
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
+    private _gmailSenderEmail: string | undefined = process.env.GMAIL_USER; 
+
+    // Getter for GMAIL_SENDER_EMAIL
+    get GMAIL_SENDER_EMAIL(): string | undefined {
+        return this._gmailSenderEmail;
+    }
+
+    // Setter for GMAIL_SENDER_EMAIL
+    set GMAIL_SENDER_EMAIL(email: string | undefined) {
+        if (email && !isValidEmail(email)) {
+            throw new Error("Invalid Gmail sender's email.");
+        }
+        this._gmailSenderEmail = email;
+    }
 
     async initializeClient({
         gmailServiceAccount,
         gmailServiceAccountPath,
-        gmailSenderEmail = DEFAULT_GMAIL_SENDER_EMAIL,
+        gmailSenderEmail = this._gmailSenderEmail, // Use the private field
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
@@ -39,12 +51,14 @@ export class GmailMailer {
                 throw new Error("Gmail service account configuration is missing.");
             }
 
+            this._gmailSenderEmail = gmailSenderEmail; // Update the private field with the provided value or the default
+
             const jwtClient = new google.auth.JWT(
                 gmailServiceAccount.client_email,
                 undefined,
                 gmailServiceAccount.private_key,
                 ['https://www.googleapis.com/auth/gmail.send'],
-                gmailSenderEmail,
+                this._gmailSenderEmail,
             );
 
             await jwtClient.authorize();
