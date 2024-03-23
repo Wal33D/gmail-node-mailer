@@ -4,44 +4,29 @@ import { google, gmail_v1 } from 'googleapis';
 import { readFileSync } from 'fs';
 import { isValidEmail } from './utils/isValidEmail';
 
-export interface ISendEmailParams {
-    senderEmail: string;
-    recipientEmail: string;
-    subject: string;
-    message: string;
-}
+import {
+    IGmailServiceAccount, IInitializeClientParams,
+    IInitializeClientResult, ISendEmailParams,
+    ISendEmailResponse
+} from './types';
 
-export interface ISendEmailResponse {
-    sent: boolean;
-    status: number;
-    message: string;
-};
-
-export interface IInitializeClientParams {
-    gmailServiceAccount?: IGmailServiceAccount;
-    gmailServiceAccountPath?: string;
-    gmailSenderEmail?: string;
-}
-
-export interface IInitializeClientResult {
-    status: boolean;
-    gmailClient: typeof google.gmail_v1.Gmail | null;
-    message: string;
-}
-export interface IGmailServiceAccount {
-    private_key: string;
-    client_email: string;
-}
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
-    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | null }> {
+    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | Error }> {
         try {
             const absolutePath = path.resolve(filePath);
             const fileContents = readFileSync(absolutePath, 'utf-8');
-            return { status: true, serviceAccount: JSON.parse(fileContents) };
+            const parsedAccount: IGmailServiceAccount = JSON.parse(fileContents);
+
+            // Validate the necessary fields are present
+            if (!parsedAccount.private_key || !parsedAccount.client_email) {
+                return { status: false, serviceAccount: Error('Invalid Service Account Structure').message };
+            }
+
+            return { status: true, serviceAccount: parsedAccount };
         } catch (error) {
-            return { status: false, serviceAccount: null };
+            return { status: false, serviceAccount: error as Error };
         }
     }
 
