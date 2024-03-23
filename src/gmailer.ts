@@ -46,7 +46,7 @@ export class GmailMailer {
         }
     }
 
-    
+
     async initializeClient({
         gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT as any),
         gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH as any,
@@ -58,9 +58,10 @@ export class GmailMailer {
             }
 
             if (!gmailServiceAccount && gmailServiceAccountPath) {
-                gmailServiceAccount = await this.parseServiceAccountFile({ filePath: gmailServiceAccountPath });
-            } else if (!gmailServiceAccount && !gmailServiceAccountPath) {
-                throw new Error("Gmail service account data or path to the JSON file must be provided.");
+                // Use the new parseServiceAccountFile method
+                gmailServiceAccount = await this.parseServiceAccountFile(gmailServiceAccountPath);
+            } else if (!gmailServiceAccount) {
+                throw new Error("Gmail service account data must be provided either directly or through a file path.");
             }
 
             const jwtClient = new google.auth.JWT(
