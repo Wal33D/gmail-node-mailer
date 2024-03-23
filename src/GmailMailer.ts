@@ -81,8 +81,7 @@ export class GmailMailer {
     async sendEmailWrapper(params: ISendEmailParams): Promise<ISendEmailResponse> {
         if (!this.gmailClient) {
             return {
-                sent: false,
-                status: 500,
+                status: false,
                 message: 'Gmail client is not initialized. Call initializeClient first.'
             };
         }

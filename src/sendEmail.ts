@@ -1,5 +1,5 @@
 import { gmail_v1 } from 'googleapis';
-import { ISendEmailParams, ISendEmailResponse } from './types'; 
+import { ISendEmailParams, ISendEmailResponse } from './types';
 
 export async function sendEmail(
     gmailClient: gmail_v1.Gmail | null,
@@ -15,9 +15,9 @@ export async function sendEmail(
         `Subject: ${subject}\r\n\r\n` +
         `${message}`
     )
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
 
     try {
         const response = await gmailClient.users.messages.send({
@@ -26,15 +26,16 @@ export async function sendEmail(
         });
 
         const isSuccess = response.status >= 200 && response.status < 300;
+
+        if (!isSuccess) { Error('Unknown Error') }
+
         return {
-            sent: isSuccess,
-            status: response.status,
-            message: isSuccess ? response.statusText : 'Unknown Error',
+            status: true,
+            message: `Email successfully sent to ${recipientEmail}`,
         };
     } catch (error: any) {
         return {
-            sent: false,
-            status: error.response?.status,
+            status: false,
             message: error.response?.statusText || error.message,
         };
     }
