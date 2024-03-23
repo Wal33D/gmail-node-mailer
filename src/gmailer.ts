@@ -36,16 +36,17 @@ export interface IGmailServiceAccount {
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
-    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; credentials: IGmailServiceAccount | null }> {
+    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | null }> {
         try {
             const absolutePath = path.resolve(filePath);
             const fileContents = readFileSync(absolutePath, 'utf-8');
-            return { status: true, credentials: JSON.parse(fileContents) };
+            return { status: true, serviceAccount: JSON.parse(fileContents) };
         } catch (error) {
-            return { status: false, credentials: null };
+            return { status: false, serviceAccount: null };
         }
     }
 
+    
     async initializeClient({
         gmailServiceAccount = JSON.parse(process.env.GMAIL_SERVICE_ACCOUNT as any),
         gmailServiceAccountPath = process.env.GMAIL_SERVICE_ACCOUNT_PATH as any,
