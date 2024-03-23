@@ -3,14 +3,23 @@ import { promises as fsPromises } from 'fs';
 import { IGmailServiceAccount } from '../types';
 
 /**
+ * Checks if the provided error object has a `code` property.
+ * @param {any} error - The error object to check.
+ * @returns {boolean} - True if the error has a `code` property, false otherwise.
+ */
+function hasErrorCode(error: any): error is NodeJS.ErrnoException {
+    return 'code' in error;
+}
+
+/**
  * Asynchronously parses a service account file and validates its content.
  * 
  * @param {Object} params - Parameters for parsing the service account file.
  * @param {string} params.filePath - The file path of the service account JSON file.
- * @returns {Promise<{status: boolean, serviceAccount: IGmailServiceAccount | null, message: string}>} 
+ * @returns {Promise<{status: boolean, serviceAccount: IGmailServiceAccount | undefined, message: string}>} 
  *          The result of parsing the service account file, including status, the service account object (if successful), and a message.
  */
-export async function parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | null; message: string }> {
+export async function parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | undefined; message: string }> {
     try {
         const absolutePath = path.resolve(filePath);
         const fileContents = await fsPromises.readFile(absolutePath, 'utf-8');
@@ -19,29 +28,29 @@ export async function parseServiceAccountFile({ filePath }: { filePath: string }
         if (!parsedAccount.private_key || !parsedAccount.client_email) {
             return {
                 status: false,
-                serviceAccount: null,
-                message: "The service account file lacks required 'private_key' or 'client_email' fields."
+                serviceAccount: undefined,
+                message: `The service account file at '${filePath}' lacks required 'private_key' or 'client_email' fields.`
             };
         }
 
         return {
             status: true,
             serviceAccount: parsedAccount,
-            message: `Successfully loaded service account for '${parsedAccount.client_email}'.`
+            message: `Successfully loaded service account for '${parsedAccount.client_email}' from '${filePath}'.`
         };
     } catch (error: any) {
         let errorMessage = 'An error occurred while parsing the service account file.';
-        if (error.code === 'ENOENT') {
-            errorMessage = `File not found at provided path: ${filePath}.`;
+        if (hasErrorCode(error) && error.code === 'ENOENT') {
+            errorMessage = `File not found at provided path: '${filePath}'.`;
         } else if (error instanceof SyntaxError) {
-            errorMessage = `Service account file contains invalid JSON: ${filePath}.`;
+            errorMessage = `Service account file at '${filePath}' contains invalid JSON.`;
         } else {
             errorMessage += ` Error: ${error.message}`;
         }
 
         return {
             status: false,
-            serviceAccount: null,
+            serviceAccount: undefined,
             message: errorMessage
         };
     }
