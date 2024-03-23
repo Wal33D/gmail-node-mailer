@@ -14,9 +14,11 @@ export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
     /**
-     * Initializes the Gmail API client with the provided configuration.
-     * @param {IInitializeClientParams} config - Configuration parameters for initializing the client.
-     * @returns {Promise<IInitializeClientResult>} - The result of the initialization attempt.
+     * Initializes the Gmail API client using specified configuration parameters.
+     * Ensures that a valid service account and Gmail sender email are provided.
+     * 
+     * @param {IInitializeClientParams} config The configuration parameters for client initialization.
+     * @returns {Promise<IInitializeClientResult>} The result of the client initialization attempt.
      */
     async initializeClient({
         gmailServiceAccount = gmailServiceAccountConfig.getServiceAccount(),
@@ -25,26 +27,25 @@ export class GmailMailer {
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
-                throw new Error("The provided Gmail sender's email is invalid or missing.");
+                throw new Error("The Gmail sender's email is invalid or missing.");
             }
 
-            // Load the service account from file if necessary.
             if (!gmailServiceAccount && gmailServiceAccountPath) {
                 const serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
                 if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
-                    throw new Error(`Failed to load service account: ${serviceAccountResult.message}`);
+                    throw new Error(serviceAccountResult.message);
                 }
                 gmailServiceAccountConfig.setServiceAccount(serviceAccountResult.serviceAccount);
-                gmailServiceAccount = serviceAccountResult.serviceAccount;
             }
 
             if (!gmailServiceAccount) {
-                throw new Error("Service account configuration is missing.");
+                throw new Error("Service account configuration is required but was not provided.");
             }
 
+            // Update the sender email in the configuration.
             emailConfig.setGmailSenderEmail(gmailSenderEmail);
 
-            // Initialize the JWT client for Gmail API.
+            // Initialize the JWT client for accessing the Gmail API.
             const jwtClient = new google.auth.JWT(
                 gmailServiceAccount.client_email,
                 undefined,
@@ -59,27 +60,28 @@ export class GmailMailer {
             return {
                 status: true,
                 gmailClient: this.gmailClient,
-                message: "Gmail API client was initialized successfully."
+                message: "Successfully initialized the Gmail API client."
             };
         } catch (error: any) {
             return {
                 status: false,
                 gmailClient: null,
-                message: `Initialization error: ${error.message}`
+                message: `Initialization failed: ${error.message}`
             };
         }
     }
 
     /**
-     * Wraps the sendEmail function, ensuring the Gmail client is initialized.
-     * @param {ISendEmailParams} params - Parameters for sending the email.
-     * @returns {Promise<ISendEmailResponse>} - The result of the email sending attempt.
+     * Sends an email using the Gmail API client, ensuring the client is initialized first.
+     * 
+     * @param {ISendEmailParams} params Parameters required for sending the email.
+     * @returns {Promise<ISendEmailResponse>} Result of the email sending operation.
      */
     async sendEmailWrapper(params: ISendEmailParams): Promise<ISendEmailResponse> {
         if (!this.gmailClient) {
             return {
                 status: false,
-                message: 'The Gmail client has not been initialized. Please call initializeClient first.'
+                message: 'Please initialize the Gmail client before sending emails.'
             };
         }
         return sendEmail(this.gmailClient, params);
