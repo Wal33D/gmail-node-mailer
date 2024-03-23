@@ -1,9 +1,11 @@
-import { sendEmail } from './sendEmail';
-import { emailConfig } from './utils/emailConfig';
-import { isValidEmail } from './utils/isValidEmail';
 import { google, gmail_v1 } from 'googleapis';
+import { sendEmail } from './sendEmail';
+import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
+import { emailConfig } from './utils/emailConfig';
+import { gmailServiceAccountConfig } from './utils/gmailServiceAccountConfig'; // Import the new config
 import {
+    IGmailServiceAccount,
     IInitializeClientParams,
     IInitializeClientResult, ISendEmailParams,
     ISendEmailResponse
@@ -11,11 +13,10 @@ import {
 
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
-    private _gmailSenderEmail: string | undefined = process.env.GMAIL_USER; 
 
     async initializeClient({
-        gmailServiceAccount,
-        gmailServiceAccountPath,
+        gmailServiceAccount = gmailServiceAccountConfig.serviceAccount as IGmailServiceAccount,
+        gmailServiceAccountPath = gmailServiceAccountConfig.serviceAccountPath as string,
         gmailSenderEmail = emailConfig.GMAIL_SENDER_EMAIL, 
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
@@ -23,30 +24,26 @@ export class GmailMailer {
                 throw new Error("Invalid or missing Gmail sender's email.");
             }
 
-            let serviceAccountResult;
-
             if (!gmailServiceAccount && gmailServiceAccountPath) {
-                serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
+                const serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
                 if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
                     throw new Error(serviceAccountResult.message);
                 }
-                gmailServiceAccount = serviceAccountResult.serviceAccount;
-            } else if (!gmailServiceAccount && !gmailServiceAccountPath) {
-                throw new Error("Gmail service account data or path to the JSON file must be provided.");
+                gmailServiceAccountConfig.serviceAccount = serviceAccountResult.serviceAccount; // Update the config with the loaded account
             }
 
             if (!gmailServiceAccount) {
                 throw new Error("Gmail service account configuration is missing.");
             }
 
-            emailConfig.GMAIL_SENDER_EMAIL = gmailSenderEmail;
+            emailConfig.GMAIL_SENDER_EMAIL = gmailSenderEmail; // Update the email config
 
             const jwtClient = new google.auth.JWT(
                 gmailServiceAccount.client_email,
                 undefined,
                 gmailServiceAccount.private_key,
                 ['https://www.googleapis.com/auth/gmail.send'],
-                this._gmailSenderEmail,
+                gmailSenderEmail,
             );
 
             await jwtClient.authorize();

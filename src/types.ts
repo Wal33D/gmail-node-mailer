@@ -27,3 +27,5 @@ export interface IGmailServiceAccount {
     private_key: string;
     client_email: string;
 }
+
+
