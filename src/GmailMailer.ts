@@ -1,5 +1,5 @@
 import { google, gmail_v1 } from 'googleapis';
-import { sendEmail } from './sendEmail';
+import { sendEmail } from './functions/sendEmail';
 import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import { emailConfig } from './utils/emailConfig';

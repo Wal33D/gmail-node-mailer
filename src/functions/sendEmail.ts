@@ -1,15 +1,15 @@
 import { gmail_v1 } from 'googleapis';
-import { ISendEmailParams, ISendEmailResponse } from './types';
+import { ISendEmailParams, ISendEmailResponse } from '../types';
 
 /**
  * Sends an email using the Gmail API client.
  * 
- * @param {gmail_v1.Gmail | null} gmailClient The Gmail API client instance.
+ * @param {gmail_v1.Gmail} gmailClient The Gmail API client instance.
  * @param {ISendEmailParams} params Parameters required for sending the email.
  * @returns {Promise<ISendEmailResponse>} The result of the email sending operation.
  */
 export async function sendEmail(
-    gmailClient: gmail_v1.Gmail | null,
+    gmailClient: gmail_v1.Gmail,
     { senderEmail, recipientEmail, subject, message }: ISendEmailParams
 ): Promise<ISendEmailResponse> {
     if (!gmailClient) {
