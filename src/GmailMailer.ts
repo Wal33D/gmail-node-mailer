@@ -12,7 +12,12 @@ import {
 
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
-
+    
+    constructor(gmailClient?: gmail_v1.Gmail) {
+        if (gmailClient) {
+            this.gmailClient = gmailClient;
+        }
+    }
     /**
      * Initializes the Gmail API client using specified configuration parameters.
      * Ensures that a valid service account and Gmail sender email are provided.
