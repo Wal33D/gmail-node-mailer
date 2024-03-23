@@ -5,7 +5,6 @@ import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import { emailConfig } from './utils/emailConfig';
 import { gmailServiceAccountConfig } from './utils/gmailServiceAccountConfig'; 
 import {
-    IGmailServiceAccount,
     IInitializeClientParams,
     IInitializeClientResult, ISendEmailParams,
     ISendEmailResponse
@@ -15,9 +14,9 @@ export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
     async initializeClient({
-        gmailServiceAccount = gmailServiceAccountConfig.get_SERVICE_ACCOUNT() as IGmailServiceAccount,
+        gmailServiceAccount = gmailServiceAccountConfig.get_SERVICE_ACCOUNT(),
         gmailServiceAccountPath = gmailServiceAccountConfig.get_SERVICE_ACCOUNT_PATH(),
-        gmailSenderEmail = emailConfig.get_GMAIL_SENDER_EMAIL,
+        gmailSenderEmail = emailConfig.get_GMAIL_SENDER_EMAIL(),
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
@@ -29,7 +28,6 @@ export class GmailMailer {
                 if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
                     throw new Error(serviceAccountResult.message);
                 }
-                // Use the setter method to update the service account in the config
                 gmailServiceAccountConfig.set_SERVICE_ACCOUNT(serviceAccountResult.serviceAccount);
                 gmailServiceAccount = serviceAccountResult.serviceAccount;
             }
@@ -38,7 +36,6 @@ export class GmailMailer {
                 throw new Error("Gmail service account configuration is missing.");
             }
 
-            // Update the email config using its setter
             emailConfig.set_GMAIL_SENDER_EMAIL(gmailSenderEmail);
 
             const jwtClient = new google.auth.JWT(
