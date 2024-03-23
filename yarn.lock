@@ -624,6 +624,11 @@
     expect "^29.0.0"
     pretty-format "^29.0.0"
 
+"@types/mocha@^10.0.6":
+  version "10.0.6"
+  resolved "https://registry.npmjs.org/@types/mocha/-/mocha-10.0.6.tgz"
+  integrity sha512-dJvrYWxP/UcXm36Qn36fxhUKu8A/xMRXVT2cliFF1Z7UA9liG5Psj3ezNSZw+5puH2czDXRLcXQxf8JbJt0ejg==
+
 "@types/node@*":
   version "20.11.30"
   resolved "https://registry.npmjs.org/@types/node/-/node-20.11.30.tgz"
