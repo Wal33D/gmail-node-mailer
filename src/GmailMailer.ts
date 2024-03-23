@@ -72,18 +72,34 @@ export class GmailMailer {
     }
 
     /**
-     * Sends an email using the Gmail API client, ensuring the client is initialized first.
-     * 
-     * @param {ISendEmailParams} params Parameters required for sending the email.
-     * @returns {Promise<ISendEmailResponse>} Result of the email sending operation.
-     */
+      * Wraps the sendEmail function to use the initialized Gmail client and sender email.
+      * 
+      * @param {ISendEmailParams} params Parameters for sending the email, with optional senderEmail.
+      * @returns {Promise<ISendEmailResponse>} The result of attempting to send the email.
+      */
+     
     async sendEmailWrapper(params: ISendEmailParams): Promise<ISendEmailResponse> {
         if (!this.gmailClient) {
             return {
                 status: false,
-                message: 'Please initialize the Gmail client before sending emails.'
+                message: 'The Gmail client has not been initialized. Please call initializeClient first.'
             };
         }
-        return sendEmail(this.gmailClient, params);
+
+        // Use the senderEmail from emailConfig if it's not provided in params.
+        const senderEmail = params.senderEmail || emailConfig.getGmailSenderEmail();
+
+        // Ensure there is a sender email to use.
+        if (!senderEmail) {
+            return {
+                status: false,
+                message: 'Sender email is not configured. Please provide a sender email.'
+            };
+        }
+
+        // Adjust the params object to include the senderEmail from emailConfig if necessary.
+        const adjustedParams = { ...params, senderEmail };
+
+        return sendEmail(this.gmailClient, adjustedParams);
     }
 }
