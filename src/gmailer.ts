@@ -1,12 +1,14 @@
 import { google, gmail_v1 } from 'googleapis';
+
+import { sendEmail } from './sendEmail'; 
 import { isValidEmail } from './utils/isValidEmail';
+import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 
 import {
     IInitializeClientParams,
     IInitializeClientResult, ISendEmailParams,
     ISendEmailResponse
 } from './types';
-import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
@@ -15,7 +17,7 @@ export class GmailMailer {
         gmailServiceAccount,
         gmailServiceAccountPath,
         gmailSenderEmail = process.env.GMAIL_USER,
-  }: IInitializeClientParams): Promise<IInitializeClientResult> {
+    }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
                 throw new Error("Invalid or missing Gmail sender's email.");
@@ -62,48 +64,14 @@ export class GmailMailer {
         }
     }
 
-    async sendEmail({
-        senderEmail = process.env.GMAIL_USER as string,
-        recipientEmail,
-        subject,
-        message,
-    }: ISendEmailParams): Promise<ISendEmailResponse> {
+    async sendEmailWrapper(params: ISendEmailParams): Promise<ISendEmailResponse> {
         if (!this.gmailClient) {
-            throw new Error('Gmail client is not initialized. Call initializeClient first.');
-        }
-
-        const rawEmail = Buffer.from(
-            `From: ${senderEmail}\r\n` +
-            `To: ${recipientEmail}\r\n` +
-            `Subject: ${subject}\r\n\r\n` +
-            `${message}`,
-        )
-            .toString('base64')
-            .replace(/\+/g, '-')
-            .replace(/\//g, '_');
-
-        try {
-            const response = await this.gmailClient.users.messages.send({
-                userId: 'me',
-                requestBody: {
-                    raw: rawEmail,
-                },
-            });
-
-            const isSuccess = response.status >= 200 && response.status < 300;
-
-            return {
-                sent: isSuccess,
-                status: response.status,
-                message: isSuccess ? response.statusText : 'Unknown Error',
-            };
-        } catch (error: any) {
             return {
                 sent: false,
-                status: error.response?.status,
-                message: error.response?.statusText || error.message,
+                status: 500,
+                message: 'Gmail client is not initialized. Call initializeClient first.'
             };
         }
+        return sendEmail(this.gmailClient, params);
     }
 }
-
