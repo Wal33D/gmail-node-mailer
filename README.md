@@ -1,89 +1,70 @@
-# Gmail Node Mailer Package
+# Gmail Node Mailer
 
-This Node.js package simplifies sending emails using the Gmail API. It wraps the complexity of Google's authentication and email sending process into a few easy-to-use functions.
+The \`gmail-node-mailer\` package provides a streamlined way to send emails using the Gmail API within Node.js applications. This package simplifies the process of setting up the Gmail API client, validating email addresses, and sending emails. It also offers flexibility by allowing users to configure the Gmail service account and sender email dynamically.
 
 ## Features
 
-- Easy Gmail API authentication using service accounts.
-- Send emails with simple function calls.
-- Includes TypeScript definitions for better development experience.
+- Initialize the Gmail API client with service account credentials.
+- Validate sender and recipient email addresses.
+- Send emails with customizable sender, recipient, subject, and message content.
+- Configure service account and sender email through utility functions.
 
-## Installation
+## Getting Started
+
+### Installation
+
+To install the package, run the following command in your Node.js project directory:
 
 \`\`\`bash
 npm install gmail-node-mailer
 \`\`\`
 
-Or if you prefer using Yarn:
+### Usage
 
-\`\`\`bash
-yarn add gmail-node-mailer
-\`\`\`
+1. **Initialize the Gmail API Client**
 
-## Quick Start
+   Before sending emails, you must initialize the Gmail API client with your service account credentials.
 
-First, ensure you have a service account set up in your Google Cloud Project and have downloaded the service account JSON file. Also, make sure the Gmail API is enabled.
+   \`\`\`typescript
+   import { GmailMailer } from 'gmail-node-mailer';
 
-### Setting Up Environment Variables
+   const mailer = new GmailMailer();
 
-Create a \`.env\` file in your project's root directory and add the following variables:
-
-\`\`\`plaintext
-GMAIL_USER=your_email@example.com
-\`\`\`
-
-Replace \`your_email@example.com\` with the email address of the Google account you wish to send emails from. Ensure this account is associated with your Google Cloud Project and has the Gmail API enabled.
-
-### Using the Package
-
-1. **Initialize the Email Client**
-
-   Import and call \`initializeClient\` at the start of your application. This function initializes the Gmail API client using credentials from your service account JSON file and the sender email from your environment variables.
-
-   \`\`\`javascript
-   import { initializeClient } from 'gmail-node-mailer';
-
-   const emailClient = await initializeClient();
+   // Initialize with your service account credentials
+   await mailer.initializeClient({
+     gmailServiceAccountPath: '/path/to/service-account.json',
+   });
    \`\`\`
 
 2. **Send an Email**
 
-   Once the client is initialized, you can send emails using the \`sendEmail\` function.
+   After initializing the client, you can send emails by providing the sender, recipient, subject, and message.
 
-   \`\`\`javascript
-   import { sendEmail } from 'gmail-node-mailer';
+   \`\`\`typescript
+   const emailParams = {
+     senderEmail: 'your-email@gmail.com',
+     recipientEmail: 'recipient-email@gmail.com',
+     subject: 'Hello from Gmail Node Mailer',
+     message: 'This is a test email sent using the Gmail Node Mailer package.',
+   };
 
-   const emailResponse = await sendEmail({
-     senderEmail: 'your_email@example.com',
-     recipientEmail: 'recipient@example.com',
-     subject: 'Hello World',
-     message: 'This is a test email sent from gmail-node-mailer.'
-   });
-
-   console.log(emailResponse);
+   const response = await mailer.sendEmailWrapper(emailParams);
+   console.log(response.message);
    \`\`\`
 
-## API Reference
+## Configuration
 
-### \`initializeClient(options?)\`
+- **Service Account**: Set the path to your service account JSON file or directly provide the service account object.
+- **Sender Email**: Configure the default sender email address.
 
-Initializes and returns the Gmail API client.
+## Utilities
 
-- **options** (optional): An object containing \`serviceAccount\` and \`senderEmail\`. If not provided, the package will use the service account JSON file located at \`./private/service_account.json\` and the \`GMAIL_USER\` environment variable.
-
-### \`sendEmail({ senderEmail, recipientEmail, subject, message })\`
-
-Sends an email using the initialized Gmail API client.
-
-- **senderEmail**: The email address of the sender.
-- **recipientEmail**: The email address of the recipient.
-- **subject**: The subject of the email.
-- **message**: The plain text message body of the email.
+This package includes utilities for validating email addresses, parsing service account files, and managing configuration settings.
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements you wish to make.
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](#).
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Distributed under the MIT License. See \`LICENSE\` for more information.
