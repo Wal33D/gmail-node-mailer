@@ -1,51 +1,21 @@
-// Importing necessary modules
-import * as path from 'path';
 import { google, gmail_v1 } from 'googleapis';
-import { readFileSync } from 'fs';
 import { isValidEmail } from './utils/isValidEmail';
 
 import {
-    IGmailServiceAccount, IInitializeClientParams,
+    IInitializeClientParams,
     IInitializeClientResult, ISendEmailParams,
     ISendEmailResponse
 } from './types';
+import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
-
-    private async parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{ status: boolean; serviceAccount: IGmailServiceAccount | null; message: string; }> {
-        try {
-            const absolutePath = path.resolve(filePath);
-            const fileContents = readFileSync(absolutePath, 'utf-8');
-            const parsedAccount: IGmailServiceAccount = JSON.parse(fileContents);
-
-            if (!parsedAccount.private_key || !parsedAccount.client_email) {
-                return {
-                    status: false,
-                    serviceAccount: null,
-                    message: "The service account file is missing required fields: 'private_key' or 'client_email'."
-                };
-            }
-
-            return {
-                status: true,
-                serviceAccount: parsedAccount,
-                message: `Service account for '${parsedAccount.client_email}' loaded successfully.`
-            };
-        } catch (error: any) {
-            return {
-                status: false,
-                serviceAccount: null,
-                message: `Failed to parse service account file: ${error.message}`
-            };
-        }
-    }
 
     async initializeClient({
         gmailServiceAccount,
         gmailServiceAccountPath,
         gmailSenderEmail = process.env.GMAIL_USER,
-    }: IInitializeClientParams): Promise<IInitializeClientResult> {
+  }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
                 throw new Error("Invalid or missing Gmail sender's email.");
@@ -54,9 +24,9 @@ export class GmailMailer {
             let serviceAccountResult;
 
             if (!gmailServiceAccount && gmailServiceAccountPath) {
-                serviceAccountResult = await this.parseServiceAccountFile({ filePath: gmailServiceAccountPath });
+                serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
                 if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
-                    throw new Error("Failed to parse Gmail service account file.");
+                    throw new Error(serviceAccountResult.message);
                 }
                 gmailServiceAccount = serviceAccountResult.serviceAccount;
             } else if (!gmailServiceAccount && !gmailServiceAccountPath) {
