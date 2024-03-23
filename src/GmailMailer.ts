@@ -1,14 +1,14 @@
 import { google, gmail_v1 } from 'googleapis';
-
 import { sendEmail } from './sendEmail'; 
 import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
-
 import {
     IInitializeClientParams,
     IInitializeClientResult, ISendEmailParams,
     ISendEmailResponse
 } from './types';
+
+const DEFAULT_GMAIL_SENDER_EMAIL = process.env.GMAIL_USER;
 
 export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
@@ -16,7 +16,7 @@ export class GmailMailer {
     async initializeClient({
         gmailServiceAccount,
         gmailServiceAccountPath,
-        gmailSenderEmail = process.env.GMAIL_USER,
+        gmailSenderEmail = DEFAULT_GMAIL_SENDER_EMAIL,
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
