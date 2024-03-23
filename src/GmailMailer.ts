@@ -15,9 +15,9 @@ export class GmailMailer {
     private gmailClient: gmail_v1.Gmail | null = null;
 
     async initializeClient({
-        gmailServiceAccount = gmailServiceAccountConfig.serviceAccount as IGmailServiceAccount,
-        gmailServiceAccountPath = gmailServiceAccountConfig.serviceAccountPath as string,
-        gmailSenderEmail = emailConfig.GMAIL_SENDER_EMAIL, 
+        gmailServiceAccount = gmailServiceAccountConfig.get_SERVICE_ACCOUNT() as IGmailServiceAccount,
+        gmailServiceAccountPath = gmailServiceAccountConfig.get_SERVICE_ACCOUNT_PATH(),
+        gmailSenderEmail = emailConfig.GMAIL_SENDER_EMAIL,
     }: IInitializeClientParams): Promise<IInitializeClientResult> {
         try {
             if (!gmailSenderEmail || !isValidEmail(gmailSenderEmail)) {
@@ -29,14 +29,17 @@ export class GmailMailer {
                 if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
                     throw new Error(serviceAccountResult.message);
                 }
-                gmailServiceAccountConfig.serviceAccount = serviceAccountResult.serviceAccount; // Update the config with the loaded account
+                // Use the setter method to update the service account in the config
+                gmailServiceAccountConfig.set_SERVICE_ACCOUNT(serviceAccountResult.serviceAccount);
+                gmailServiceAccount = serviceAccountResult.serviceAccount;
             }
 
             if (!gmailServiceAccount) {
                 throw new Error("Gmail service account configuration is missing.");
             }
 
-            emailConfig.GMAIL_SENDER_EMAIL = gmailSenderEmail; // Update the email config
+            // Update the email config using its setter
+            emailConfig.GMAIL_SENDER_EMAIL = gmailSenderEmail;
 
             const jwtClient = new google.auth.JWT(
                 gmailServiceAccount.client_email,
