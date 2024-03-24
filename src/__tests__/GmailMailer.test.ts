@@ -17,7 +17,7 @@ const mockGmailClient: Partial<gmail_v1.Gmail> = {
 describe('GmailMailer', () => {
   describe('initializeClient', () => {
     it('should initialize the Gmail client successfully', async () => {
-      const gmailMailer = new GmailMailer(mockGmailClient as gmail_v1.Gmail); // If necessary, assert the type
+      const gmailMailer = new GmailMailer(mockGmailClient as gmail_v1.Gmail);
       const mockServiceAccount = {
         client_email: 'test@example.com',
         private_key: `-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n`,
@@ -38,7 +38,7 @@ describe('GmailMailer', () => {
 
   describe('sendEmailWrapper', () => {
     it('should send an email successfully', async () => {
-      // Correctly initialize GmailMailer with the mocked Gmail client
+
       const gmailMailer = new GmailMailer(mockGmailClient as gmail_v1.Gmail);
   
       const emailParams: ISendEmailParams = {
