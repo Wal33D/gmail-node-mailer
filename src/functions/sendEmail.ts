@@ -8,14 +8,13 @@ import { ISendEmailParams, ISendEmailResponse } from '../types';
  * @param {ISendEmailParams} params Parameters required for sending the email.
  * @returns {Promise<ISendEmailResponse>} The result of the email sending operation.
  */
-export async function sendEmail(
-    gmailClient: gmail_v1.Gmail,
-    { senderEmail, recipientEmail, subject, message }: ISendEmailParams
+export async function sendEmail(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message }: ISendEmailParams
 ): Promise<ISendEmailResponse> {
     if (!gmailClient) {
         return {
             status: false,
-            message: 'The Gmail client has not been initialized. Please call initializeClient first.'
+            message: 'The Gmail client has not been initialized. Please call initializeClient first.',
+            response: null,
         };
     }
 
@@ -26,8 +25,8 @@ export async function sendEmail(
         `${message}`,
         'utf-8'
     ).toString('base64')
-     .replace(/\+/g, '-')
-     .replace(/\//g, '_');
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_');
 
     try {
         const response = await gmailClient.users.messages.send({
@@ -39,17 +38,20 @@ export async function sendEmail(
             return {
                 status: false,
                 message: `Failed to send email. Status: ${response.status}`,
+                response
             };
         }
 
         return {
             status: true,
             message: `Email successfully sent to ${recipientEmail}.`,
+            response,
         };
     } catch (error: any) {
         return {
             status: false,
             message: `An error occurred while sending the email: ${error.message}`,
+            response: error.response?.data
         };
     }
 }

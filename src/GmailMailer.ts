@@ -1,5 +1,5 @@
 import { google, gmail_v1 } from 'googleapis';
-import { sendEmail } from './functions/sendEmail';
+import { sendEmail as sendEmailFunction } from './functions/sendEmail';
 import { isValidEmail } from './utils/isValidEmail';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import { emailConfig } from './utils/emailConfig';
@@ -78,11 +78,12 @@ export class GmailMailer {
     * @param {ISendEmailParams} params - Email sending parameters.
     * @returns {Promise<ISendEmailResponse>} - Result of the email sending operation.
     */
-  async sendEmailWrapper(params: ISendEmailParams): Promise<ISendEmailResponse> {
+  async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
       return {
         status: false,
-        message: 'Gmail client not initialized. Please initialize before sending emails.'
+        message: 'Gmail client not initialized. Please initialize before sending emails.',
+        response: null,
       };
     }
 
@@ -90,11 +91,12 @@ export class GmailMailer {
     if (!senderEmail) {
       return {
         status: false,
-        message: 'Sender email not configured. Please provide a sender email.'
+        message: 'Sender email not configured. Please provide a sender email.',
+        response: null,
       };
     }
 
     const adjustedParams = { ...params, senderEmail };
-    return sendEmail(this.gmailClient, adjustedParams);
+    return sendEmailFunction(this.gmailClient, adjustedParams);
   }
 }

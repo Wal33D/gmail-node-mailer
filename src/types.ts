@@ -10,6 +10,7 @@ export interface ISendEmailParams {
 export interface ISendEmailResponse {
     status: boolean;
     message: string;
+    response:any| null;
 };
 
 export interface IInitializeClientParams {
