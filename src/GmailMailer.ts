@@ -21,26 +21,18 @@ export class GmailMailer {
   }
 
 /**
- * Initializes the Gmail API client using the provided or environment-based configuration. This method validates the
- * Gmail sender's email address and authenticates using service account credentials. It supports multiple ways to provide
- * these credentials: directly via parameters, loaded from a file path, or parsed from an environment variable.
+ * Initializes the Gmail API client with configurations from parameters, a file path, or an environment variable.
+ * It validates the Gmail sender's email and authenticates using service account credentials. The method offers flexibility 
+ * for development and production environments: use a file path (`gmailServiceAccountPath`) for local development and an 
+ * environment variable (`GMAIL_MAILER_SERVICE_ACCOUNT`) containing JSON credentials for production. This dual approach 
+ * enables seamless transitions between environments without code changes, facilitating easy setup and deployment.
  * 
- * If the service account credentials are not directly provided, the method first attempts to load them from the specified
- * file path. If no path is provided or if the file does not contain valid credentials, it then attempts to parse the
- * credentials from the `GMAIL_MAILER_SERVICE_ACCOUNT` environment variable. This environment variable should contain
- * the JSON representation of the service account credentials.
+ * - If service account credentials are not provided directly, it tries loading from `gmailServiceAccountPath`.
+ * - Fails to find a file, it attempts to parse credentials from `GMAIL_MAILER_SERVICE_ACCOUNT`.
+ * - Validates the Gmail sender's email. If invalid or missing, or if credentials are unobtainable, throws an error.
  * 
- * This flexible initialization approach allows the GmailMailer to be configured in various deployment environments,
- * supporting both file-based configurations for development and direct JSON configurations for environments where
- * file access may be restricted or inconvenient. Specifically, this design facilitates easy integration across different
- * environments, such as development and production. For instance, while running on a platform like Digital Ocean, the
- * `GMAIL_MAILER_SERVICE_ACCOUNT` environment variable can be set to provide the service account details directly in production,
- * whereas in a development environment, the `gmailServiceAccountPath` can be used to point to a local file with the service
- * account credentials. This ensures that the package can automatically adapt to both environments without requiring code changes,
- * simplifying the deployment process and enhancing operational efficiency.
- * 
- * @param {IInitializeClientParams} config - Configuration for Gmail client initialization, including service account details and sender email.
- * @returns {Promise<IInitializeClientResult>} - The result of the initialization attempt, including the status, initialized Gmail client instance, and any error messages.
+ * @param {IInitializeClientParams} config Configuration includes service account details and sender email.
+ * @returns {Promise<IInitializeClientResult>} Result of initialization with status and potential error messages.
  */
 
   async initializeClient({
