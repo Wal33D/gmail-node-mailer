@@ -34,4 +34,4 @@ To use `gmail-node-mailer`, you first need to enable the Gmail API. Here's how:
 
 After completing these steps, your service account should be set up and ready to use with `gmail-node-mailer`.
 
-[Back to main README](README.md)
+[Back to main README](../README.md)

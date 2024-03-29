@@ -1,4 +1,4 @@
-import { google, gmail_v1 } from 'googleapis';
+import { google } from 'googleapis';
 
 export interface ISendEmailParams {
     recipientEmail: string;
