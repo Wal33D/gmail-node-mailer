@@ -34,7 +34,7 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
   `;
 
   await mailer.sendEmail({
-    senderEmail: process.env.GMAIL_USER,
+    senderEmail: process.env.GMAIL_MAILER_SENDER,
     recipientEmail: customerEmail,
     subject: '🎉 Welcome to Your New Adventure!',
     message: htmlMessage,
@@ -45,6 +45,6 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
 ### Notes
 
 - Make sure to replace `'./path/to/your-service-account.json'` with the actual path to your service account JSON file.
-- Don't forget to set `process.env.GMAIL_USER` to your Gmail user.
+- Don't forget to set `process.env.GMAIL_MAILER_SENDER` to your Gmail user.
 
 For more detailed information, refer to the official documentation.
