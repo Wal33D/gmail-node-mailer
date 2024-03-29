@@ -31,23 +31,10 @@ npm install gmail-node-mailer
 
 ### Server Start/Stop Notifications
 
-Certainly! Here's the detailed portion you requested for the **Server Start/Stop Notifications** using `gmail-node-mailer`:
-
-### Server Start/Stop Notifications
-
 Seamlessly notify about server start or stop events using `gmail-node-mailer`. Here's an example on how to set up and send these notifications:
 
 ```typescript
 import { GmailMailer } from 'gmail-node-mailer';
-
-// Assuming global.gmailClient is declared somewhere globally accessible within your application.
-declare global {
-  namespace NodeJS {
-    interface Global {
-      gmailClient: GmailMailer;
-    }
-  }
-}
 
 async function initializeMailer() {
   const mailer = new GmailMailer();
@@ -62,7 +49,6 @@ async function notifyServerStatus(status: 'start' | 'stop') {
   const message = status === 'start' ? 'Server is up and running.' : 'Server has been shut down.';
   try {
     await global.gmailClient.sendEmail({
-      senderEmail: "sender@example.com", // Or use process.env.GMAIL_MAILER_SENDER_EMAIL if configured
       recipientEmail: 'admin@example.com',
       subject: `Server ${status} Notification`,
       message,

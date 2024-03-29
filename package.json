@@ -1,6 +1,6 @@
 {
   "name": "gmail-node-mailer",
-  "version": "1.7.314",
+  "version": "1.7.316",
   "description": "gmail-node-mailer is a Node.js library for easy email sending via the Gmail API, featuring quick setup, HTML/plain text support, and dynamic configuration for streamlined email integration.",
   "main": "dist/index.js",
   "scripts": {
