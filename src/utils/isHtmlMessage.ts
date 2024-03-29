@@ -12,7 +12,11 @@ export const isHtmlMessage = ({ message }: { message: string }) => {
     let result: boolean | null = null;
     
     try {
-        result = /<\/?[a-z][\s\S]*>/i.test(message);
+        // More efficient regex pattern to check for the presence of HTML tags
+        // This pattern aims to reduce backtracking by limiting the extent of wildcard matching
+        // and focusing on the structure of HTML tags
+        const htmlTagRegex = /<\/?[a-z]+(\s+[a-z-]+(?:="[^"]*")?)*\s*\/?>/i;
+        result = htmlTagRegex.test(message);
         status = true;
     } catch (error: any) {
         console.error("Error checking for HTML content:", error.message);
