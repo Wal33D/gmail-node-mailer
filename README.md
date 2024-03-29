@@ -38,7 +38,7 @@ async function notifyServerStatus(status) {
 
   const message = status === 'start' ? 'Server is up and running.' : 'Server has been shut down.';
   await mailer.sendEmail({
-    senderEmail: process.env.GMAIL_USER,
+    senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
     recipientEmail: 'admin@example.com',
     subject: `Server ${status} Notification`,
     message,
@@ -84,7 +84,7 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
   `;
 
   await mailer.sendEmail({
-    senderEmail: process.env.GMAIL_USER,
+    senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
     recipientEmail: customerEmail,
     subject: '🎉 Welcome to Your New Adventure!',
     message: htmlMessage,

@@ -4,7 +4,7 @@ import { isValidEmail } from './isValidEmail';
  * Manages the configuration for the Gmail sender's email.
  */
 class EmailConfig {
-    private _gmailSenderEmail: string | undefined = process.env.GMAIL_USER;
+    private _gmailSenderEmail: string | undefined = process.env.GMAIL_MAILER_SENDER_EMAIL;
 
     /**
      * Retrieves the currently set Gmail sender email.
