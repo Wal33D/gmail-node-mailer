@@ -63,7 +63,7 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
   });
 
   // Customize your message based on subscription details
-  const htmlMessage = """
+  const htmlMessage = `
     <!DOCTYPE html>
     <html>
     <head>
@@ -81,7 +81,7 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
         </div>
     </body>
     </html>
-  """;
+  `;
 
   await mailer.sendEmail({
     senderEmail: process.env.GMAIL_USER,
