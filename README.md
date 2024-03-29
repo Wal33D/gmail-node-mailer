@@ -2,6 +2,10 @@
 
 Simplify your email sending process within Node.js applications with `gmail-node-mailer`. This lightweight package harnesses the power of the Gmail API to send emails effortlessly. Whether you're sending a quick notification or a detailed newsletter, `gmail-node-mailer` makes it straightforward.
 
+**GitHub Repository:** [gmail-node-mailer on GitHub](https://github.com/our-node-packages/gmail-node-mailer)
+
+**npm Package:** [gmail-node-mailer on npm](https://www.npmjs.com/package/gmail-node-mailer)
+
 ## Quick Features
 
 - 🚀 Quick setup with service account credentials.
