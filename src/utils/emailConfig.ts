@@ -20,8 +20,11 @@ class EmailConfig {
      * @throws {Error} Throws an error if the email is invalid.
      */
     setGmailSenderEmail(email: string | undefined) {
-        if (email && !isValidEmail(email)) {
-            throw new Error("The provided Gmail sender's email is invalid.");
+        if (email) {
+            const validation = isValidEmail({ email }); 
+            if (!validation.status || !validation.result) { 
+                throw new Error("The provided Gmail sender's email is invalid.");
+            }
         }
         this._gmailSenderEmail = email;
     }

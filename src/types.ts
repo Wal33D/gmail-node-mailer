@@ -1,16 +1,19 @@
-import { google } from 'googleapis';
+import { google, gmail_v1 } from 'googleapis';
 
 export interface ISendEmailParams {
-    senderEmail: string;
     recipientEmail: string;
+    senderEmail: string;
     subject: string;
     message: string;
 }
 
 export interface ISendEmailResponse {
-    status: boolean;
+    sent: boolean;
+    status: number | null;
+    statusText: string | null;
+    responseUrl: string | null;
     message: string;
-    response:any| null;
+    gmailResponse: any | null;
 };
 
 export interface IInitializeClientParams {
@@ -29,4 +32,8 @@ export interface IGmailServiceAccount {
     client_email: string;
 }
 
-
+export interface ISendEmailFunctionResponse {
+    sent: boolean;
+    message: string;
+    gmailResponse: any;
+}

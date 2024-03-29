@@ -2,10 +2,10 @@ import { isValidEmail } from '../utils/isValidEmail';
 
 describe('isValidEmail', () => {
   test('should return true for a valid email', () => {
-    expect(isValidEmail('test@example.com')).toBe(true);
+    expect(isValidEmail({email:'test@example.com'}).result).toBe(true);
   });
 
   test('should return false for an invalid email', () => {
-    expect(isValidEmail('testexample.com')).toBe(false);
+    expect(isValidEmail({email:'testexample.com'}).result).toBe(false);
   });
 });
