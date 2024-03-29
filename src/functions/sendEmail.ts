@@ -1,5 +1,5 @@
 import { gmail_v1 } from 'googleapis';
-import { encodeSubject } from '../utils/encodeSubject';
+import { encodeEmailSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
 import { isSubjectMimeEncoded } from '../utils/isSubjectMimeEncoded';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
@@ -21,7 +21,7 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
 
         if (!encodedCheck.result) {
             // If subject is not MIME encoded, encode it
-            const { status, result } = encodeSubject({ subject });
+            const { status, encodedSubject } = encodeEmailSubject({ subjectLine: subject });
             if (status) {
                 finalSubject = result;
             }
