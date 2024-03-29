@@ -285,14 +285,12 @@ By leveraging these features, `gmail-node-mailer` ensures that sending emails th
 
 For more detailed information on configuring `gmail-node-mailer`, including setting up environment variables, handling new subscriptions, and examples of server notifications, please refer to the following documents in the `/info` directory:
 
-- [Environment Variables Setup](/info/environment_variables.md): A guide on setting up and using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` and `GMAIL_MAILER_SERVICE_ACCOUNT` variables for development and production environments.
+- [Environment Variables Setup](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/environment_variables.md): A guide on setting up and using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` and `GMAIL_MAILER_SERVICE_ACCOUNT` variables for development and production environments.
 
-- [Handling New Subscriptions Example](/info/handling-new-subscriptions-example.md): An example script showing how to integrate `gmail-node-mailer` for handling new subscription notifications.
+- [Handling New Subscriptions Example](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/handling-new-subscriptions-example.md): An example script showing how to integrate `gmail-node-mailer` for handling new subscription notifications.
 
-- [sendEmail Function Types](/info/sendEmail_function_types.md): Documentation on the `sendEmail` function, including parameters and expected results.
+- [sendEmail Function Types](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/sendEmail_function_types.md): Documentation on the `sendEmail` function, including parameters and expected results.
 
-- [Server Notifications Example](/info/server-notifications-example.md): A detailed example on setting up server start/stop notifications using `gmail-node-mailer`.
+- [Server Notifications Example](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/server-notifications-example.md): A detailed example on setting up server start/stop notifications using `gmail-node-mailer`.
 
-- [Service Account Setup](/info/service_account_setup.md): Step-by-step instructions on setting up a Gmail service account for use with `gmail-node-mailer`.
-
-These documents provide additional insights and examples to help you effectively utilize `gmail-node-mailer` in your Node.js applications.
+- [Service Account Setup](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/service_account_setup.md): Step-by-step instructions on setting up a Gmail service account for use with `gmail-node-mailer`.
