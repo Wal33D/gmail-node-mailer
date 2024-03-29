@@ -95,14 +95,14 @@ export async function handleNewSubscription(customerEmail, subscriptionDetails) 
 export async function handleSubscriptionRenewal(customerEmail, renewalDetails) {
   // Similar to handleNewSubscription but with a message tailored to renewals
 }
-
+```
 
 
 ## Handling Responses and Results
 
 When you use `gmail-node-mailer` to send an email, the response you receive provides detailed information about the operation's success and the email sending process. Here's an overview of the structure you can expect in the response:
 
-````typescript
+```typescript
 {
   sendMailResult: {
     sent: true,
@@ -122,4 +122,4 @@ When you use `gmail-node-mailer` to send an email, the response you receive prov
     }
   }
 }
-````
+```
