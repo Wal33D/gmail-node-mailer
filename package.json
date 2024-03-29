@@ -12,7 +12,7 @@
     "mailer",
     "email"
   ],
-  "author": "Your Name",
+  "author": "Wal33d",
   "license": "ISC",
   "dependencies": {
     "googleapis": "^134.0.0"
@@ -32,5 +32,5 @@
   "bugs": {
     "url": "https://github.com/our-node-packages/gmail-node-mailer/issues"
   },
-  "homepage": "https://github.com/our-node-packages/gmail-node-mailer#readme"
+  "homepage": "https://www.npmjs.com/package/gmail-node-mailer"
 }
