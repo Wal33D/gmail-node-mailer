@@ -19,12 +19,12 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
        const { encodedSubject } = encodeEmailSubject({ subjectLine: subject });
 
         // Determine if the message is HTML or plain text
-        const htmlCheck = isHtmlMessage({ message });
+        const {status:isHtml} = isHtmlMessage({ message });
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
         // Construct MIME message based on HTML check result
         const boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
-        if (htmlCheck.result) {
+        if (isHtml) {
             mimeMessage += `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n` +
                 `--${boundary}\r\n` +
                 `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
