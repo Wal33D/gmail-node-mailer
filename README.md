@@ -97,10 +97,19 @@ export async function handleSubscriptionRenewal(customerEmail, renewalDetails) {
 }
 ```
 
+## Effortless Email Composition with Auto-Detection
 
-## Handling Responses and Results
+When crafting emails with `gmail-node-mailer`, you don't need to worry about the intricacies of email formatting or subject encoding. Our intelligent auto-detection feature takes care of it all, making the process super easy and straightforward for you. Here's how:
 
-When you use `gmail-node-mailer` to send an email, the response you receive provides detailed information about the operation's success and the email sending process. Here's an overview of the structure you can expect in the response:
+### Subject Auto-Encoding
+- **Automatic Detection**: The function automatically detects whether your subject line is encoded. If it isn't, it encodes the subject for you, ensuring compatibility across all email clients.
+- **Seamless Experience**: You simply provide the subject, and we handle the rest. Whether it's plain text or needs encoding, your subject line will be perfectly formatted.
+
+### HTML or Text Message Auto-Detection
+- **Content Flexibility**: Write your message in plain text or HTML — `gmail-node-mailer` automatically detects the format.
+- **Smart Handling**: For HTML content, the function wraps your message in the appropriate MIME type, ensuring it displays correctly in the recipient's email client. For plain text, it's sent as is, maintaining the simplicity of your message.
+
+With `gmail-node-mailer`, sending emails is as easy as writing a message and hitting send. The auto-detection features ensure that your emails are always correctly formatted, whether you're sending a quick update or a beautifully designed newsletter.
 
 ```typescript
 {
@@ -111,8 +120,6 @@ When you use `gmail-node-mailer` to send an email, the response you receive prov
     responseUrl: 'https://gmail.googleapis.com/gmail/v1/users/me/messages/send',
     message: 'Email successfully sent to waleed@glitchgaming.us.',
     gmailResponse: {
-      // Response includes configuration used for the request, data returned by Gmail API,
-      // headers from the response, status code, and status text.
       config: [Object],
       data: [Object],
       headers: [Object],
@@ -123,3 +130,5 @@ When you use `gmail-node-mailer` to send an email, the response you receive prov
   }
 }
 ```
+
+Enjoy the simplicity and power of `gmail-node-mailer`, where sending emails is made super easy, without compromising on flexibility or functionality.
