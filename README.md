@@ -27,6 +27,12 @@ npm install gmail-node-mailer
 - [Server Notifications Demo](./examples/ServerNotificationsDemo.md)
 - [Subscription Handling Demo](./examples/SubscriptionHandlingDemo.md)
 
+## Detailed Installation and Setup Guide
+
+For a comprehensive guide on installing and setting up `gmail-node-mailer`, including enabling the Gmail API and configuring service account credentials, refer to the [Installation Guide](./examples/installation.md).
+
+...
+
 ## Effortless Email Composition with Auto-Detection
 
 When crafting emails with `gmail-node-mailer`, you don't need to worry about the intricacies of email formatting or subject encoding. Our intelligent auto-detection feature takes care of it all. For a deeper dive into how this works, check out [Auto-Detection Features](./examples/AutoDetectionFeatures.md).
