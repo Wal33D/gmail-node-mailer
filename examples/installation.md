@@ -32,46 +32,6 @@ After enabling the Gmail API and obtaining your service account credentials, you
    npm install gmail-node-mailer
    ```
 
-### Initial Setup
-
-Here's how to integrate `gmail-node-mailer` into your Node.js project:
-
-1. **Import `GmailMailer`**
-
-   Import `GmailMailer` into your script or application entry point.
-
-   ```typescript
-   import { GmailMailer } from 'gmail-node-mailer';
-   ```
-
-2. **Initialize the Client**
-
-   Create an instance of `GmailMailer` and initialize it with your service account credentials.
-
-   ```typescript
-   const mailer = new GmailMailer();
-
-   async function setupMailer() {
-     await mailer.initializeClient({
-       gmailServiceAccountPath: './path/to/your-service-account.json',
-     });
-
-     // GmailMailer is now ready to send emails
-   }
-
-   setupMailer().catch(console.error);
-   ```
-
-   Here, `gmailServiceAccountPath` is the path to the JSON file you downloaded earlier.
-
-```
-
-Ensure `your-email@gmail.com` is associated with your service account or is an alias of a domain or secondary domain of your Google Project, and replace `recipient@example.com` with your recipient's email address.
-
----
-
-This guide should help you get started with `gmail-node-mailer` smoothly. For more detailed examples and capabilities, explore the [Usage](#) and [Features](#) sections.
-
 [Back to main README](README.md)
 
 ---
