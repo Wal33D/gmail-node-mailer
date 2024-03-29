@@ -1,7 +1,6 @@
 import { gmail_v1 } from 'googleapis';
 import { encodeEmailSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
-import { isSubjectMimeEncoded } from '../utils/isSubjectMimeEncoded';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
@@ -20,10 +19,12 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
 
         // Determine if the message is HTML or plain text
         const {status:isHtml} = isHtmlMessage({ message });
+
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
         // Construct MIME message based on HTML check result
         const boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
+        
         if (isHtml) {
             mimeMessage += `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n` +
                 `--${boundary}\r\n` +
