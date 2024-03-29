@@ -3,6 +3,7 @@ import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 import { isSubjectMimeEncoded } from '../utils/isSubjectMimeEncoded';
 import { encodeSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
+import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 
 /**
  * Sends an email using the Gmail API client, supporting both HTML and plain text content. It automatically
@@ -13,41 +14,44 @@ import { isHtmlMessage } from '../utils/isHtmlMessage';
  * @param {ISendEmailParams} params Parameters required for sending the email, including sender, recipient, subject, and message content.
  * @returns {Promise<ISendEmailFunctionResponse>} The result of the email sending operation, including whether the email was sent successfully, the status message, and the raw Gmail API response.
  */
-
 export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
-    let finalSubject = subject; // Initialize finalSubject with the original subject
-    const encodedCheck = isSubjectMimeEncoded({ subject });
-
-    if (!encodedCheck.result) {
-        // If subject is not MIME encoded, encode it
-        const { status, result } = encodeSubject({ subject });
-        if (status) {
-            finalSubject = result;
-        }
-    }
-
-    // Determine if the message is HTML or plain text
-    const htmlCheck = isHtmlMessage({ message });
-    let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${finalSubject}\r\n`;
-
-    // Construct MIME message based on HTML check result
-    const boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
-    if (htmlCheck.result) {
-        mimeMessage += `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n` +
-            `--${boundary}\r\n` +
-            `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
-            `${message}\r\n` +
-            `--${boundary}--`;
-    } else {
-        mimeMessage += `Content-Type: text/plain; charset=UTF-8\r\n\r\n${message}`;
-    }
-
-    const encodedEmail = Buffer.from(mimeMessage, 'utf-8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-
     try {
+        let finalSubject = subject;
+        const encodedCheck = isSubjectMimeEncoded({ subject });
+
+        if (!encodedCheck.result) {
+            // If subject is not MIME encoded, encode it
+            const { status, result } = encodeSubject({ subject });
+            if (status) {
+                finalSubject = result;
+            }
+        }
+
+        // Determine if the message is HTML or plain text
+        const htmlCheck = isHtmlMessage({ message });
+        let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${finalSubject}\r\n`;
+
+        // Construct MIME message based on HTML check result
+        const boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
+        if (htmlCheck.result) {
+            mimeMessage += `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n` +
+                `--${boundary}\r\n` +
+                `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
+                `${message}\r\n` +
+                `--${boundary}--`;
+        } else {
+            mimeMessage += `Content-Type: text/plain; charset=UTF-8\r\n\r\n${message}`;
+        }
+
+        const { isEncoded, encodedContent } = encodeMimeMessageToBase64Url({ mimeMessage });
+
+        if (!isEncoded || !encodedContent) {
+            throw new Error('Failed to encode MIME message.');
+        }
+
         const gmailResponse = await gmailClient.users.messages.send({
             userId: 'me',
-            requestBody: { raw: encodedEmail },
+            requestBody: { raw: encodedContent },
         });
 
         return {
@@ -57,6 +61,7 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
                 `Failed to send email. Status: ${gmailResponse.status}`,
             gmailResponse: gmailResponse,
         };
+
     } catch (error: any) {
         return { sent: false, message: `An error occurred while sending the email: ${error.message}`, gmailResponse: null };
     }
