@@ -39,8 +39,8 @@ import { GmailMailer } from 'gmail-node-mailer';
 async function initializeMailer() {
   const mailer = new GmailMailer();
   await mailer.initializeClient({
-  gmailSenderEmail:'example@your-domain.com'
-  gmailServiceAccountPath: './path/to/your-service-account.json',
+    gmailSenderEmail:'example@your-domain.com',
+    gmailServiceAccountPath: './path/to/your-service-account.json',
   });
   // Setting the initialized mailer to a global variable
   global.gmailClient = mailer;
