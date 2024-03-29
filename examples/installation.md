@@ -1,8 +1,6 @@
 
-# Gmail API Setup and `gmail-node-mailer` Installation
 
 ## Gmail API Setup
-
 To use `gmail-node-mailer`, you first need to enable the Gmail API and create a service account in the Google Cloud Console. Here's how:
 
 1. **Enable the Gmail API**:
