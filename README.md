@@ -132,3 +132,55 @@ With `gmail-node-mailer`, sending emails is as easy as writing a message and hit
 ```
 
 Enjoy the simplicity and power of `gmail-node-mailer`, where sending emails is made super easy, without compromising on flexibility or functionality.
+
+
+
+## Advanced Initialization and Configuration
+
+`gmail-node-mailer` offers a flexible and powerful way to initialize and configure your email sending capabilities. Here's a deep dive into how you can customize the initialization to fit your specific needs:
+
+### Initializing with Service Account Credentials
+The package allows you to authenticate using a Gmail service account for secure email sending. You can either directly provide the service account details or specify a file path to a JSON file containing these credentials.
+
+```typescript
+import { GmailMailer } from 'gmail-node-mailer';
+
+const mailer = new GmailMailer();
+
+// Initialize using direct service account details or a file path
+await mailer.initializeClient({
+  gmailServiceAccount: {client_email: '...', private_key: '...'},
+  // OR
+  gmailServiceAccountPath: './path/to/your-service-account.json',
+});
+```
+
+### Configuring Sender Email
+You can specify a default sender email address that validates its format to ensure emails are sent from a valid Gmail account.
+
+```typescript
+import { emailConfig } from 'gmail-node-mailer/utils/emailConfig';
+
+// Set and validate the Gmail sender's email
+emailConfig.setGmailSenderEmail('your-email@gmail.com');
+```
+
+### Auto-Detection of Subject Encoding and Message Format
+`gmail-node-mailer` simplifies your workflow by auto-detecting whether your subject line needs MIME encoding and determining if your message is in plain text or HTML. This means you can focus on your message content without worrying about compatibility or formatting issues.
+
+- **Subject Encoding**: If your subject line includes special characters or non-ASCII text, it's automatically encoded for you.
+- **HTML or Text Messages**: Simply write your message, and `gmail-node-mailer` handles the rest. HTML messages are sent as multipart MIME messages, ensuring they render correctly across all email clients.
+
+### Error Handling and Response Insights
+Detailed error handling and response insights are provided, making it easy to debug and ensure your emails are sent successfully.
+
+```typescript
+try {
+  const sendMailResult = await mailer.sendEmail({ ... });
+  console.log(sendMailResult);
+} catch (error) {
+  console.error('Failed to send email:', error);
+}
+```
+
+By leveraging these features, `gmail-node-mailer` ensures that sending emails through your Node.js applications is not only powerful but also incredibly easy and intuitive.
