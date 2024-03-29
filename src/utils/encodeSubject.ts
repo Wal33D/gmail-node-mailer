@@ -1,19 +1,19 @@
 /**
- * Encodes the subject string using UTF-8 and Base64 encoding.
- * @param subject - The subject string to be encoded.
- * @returns An object containing the encoding status and the encoded result.
+ * Encodes the email subject line using MIME encoded-word syntax with UTF-8 and Base64 encoding.
+ * @param {string} subjectLine - The email subject line to be encoded.
+ * @returns {Object} An object containing `isEncoded`, indicating whether the encoding was successful, and `encodedSubject`, the MIME encoded subject line.
  */
-export const encodeSubject = ({ subject }: { subject: string }) => {
-    let status = false;
-    let result: string = subject;
+export const encodeEmailSubject = ({ subjectLine }: { subjectLine: string }): { isEncoded: boolean; encodedSubject: string } => {
+    let isEncoded = false;
+    let encodedSubject: string = subjectLine; // Default to the original subject line in case encoding fails
 
     try {
-        result = `=?utf-8?B?${Buffer.from(subject, 'utf-8').toString('base64')}?=`;
-        status = true;
+        encodedSubject = `=?utf-8?B?${Buffer.from(subjectLine, 'utf-8').toString('base64')}?=`;
+        isEncoded = true; // Indicate successful encoding
     } catch (error: any) {
-        console.error("Error encoding subject:", error.message);
-        result = subject;
+        console.error("Error encoding email subject:", error.message);
+        // The encodedSubject remains the original subjectLine if an error occurs
     }
 
-    return { status, result };
+    return { isEncoded, encodedSubject };
 };

@@ -1,9 +1,9 @@
 import { gmail_v1 } from 'googleapis';
-import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
-import { isSubjectMimeEncoded } from '../utils/isSubjectMimeEncoded';
 import { encodeSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
+import { isSubjectMimeEncoded } from '../utils/isSubjectMimeEncoded';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
+import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
 /**
  * Sends an email using the Gmail API client, supporting both HTML and plain text content. It automatically
