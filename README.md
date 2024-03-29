@@ -134,6 +134,7 @@ With `gmail-node-mailer`, sending emails is as easy as writing a message and hit
 Enjoy the simplicity and power of `gmail-node-mailer`, where sending emails is made super easy, without compromising on flexibility or functionality.
 
 
+
 ## Advanced Initialization and Configuration
 
 `gmail-node-mailer` offers a flexible and powerful way to initialize and configure your email sending capabilities. Here's a deep dive into how you can customize the initialization to fit your specific needs:
