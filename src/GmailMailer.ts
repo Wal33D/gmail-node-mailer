@@ -28,6 +28,7 @@ export class GmailMailer {
    * @param {IInitializeClientParams} config Configuration for Gmail client initialization including service account details and sender email.
    * @returns {Promise<IInitializeClientResult>} The result of the initialization attempt, including status and any error messages.
    */
+
   async initializeClient({
     gmailServiceAccount = gmailServiceAccountConfig.getServiceAccount(),
     gmailServiceAccountPath = gmailServiceAccountConfig.getServiceAccountPath(),
@@ -38,12 +39,17 @@ export class GmailMailer {
         throw new Error("Invalid or missing Gmail sender's email.");
       }
 
+      // If gmailServiceAccountPath is not provided, use the environment variable
+      if (!gmailServiceAccountPath) {
+        gmailServiceAccountPath = process.env.GMAIL_MAILER_SERVICE_ACCOUNT_PATH;
+      }
+
       if (!gmailServiceAccount && gmailServiceAccountPath) {
         const serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
         if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
           throw new Error(serviceAccountResult.message);
         }
-        gmailServiceAccountConfig.setServiceAccount(serviceAccountResult.serviceAccount);
+        gmailServiceAccount = serviceAccountResult.serviceAccount; // Set the gmailServiceAccount with the loaded service account
       }
 
       if (!gmailServiceAccount) {
