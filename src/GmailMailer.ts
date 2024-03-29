@@ -73,7 +73,9 @@ export class GmailMailer {
       // Check for service account JSON in GMAIL_MAILER_SERVICE_ACCOUNT environment variable as a fallback
       if (!gmailServiceAccount && process.env.GMAIL_MAILER_SERVICE_ACCOUNT) {
         try {
-          gmailServiceAccount = JSON.parse(process.env.GMAIL_MAILER_SERVICE_ACCOUNT);
+          const decodedServiceAccount = Buffer.from(process.env.GMAIL_MAILER_SERVICE_ACCOUNT, 'base64').toString('ascii');
+
+          gmailServiceAccount = JSON.parse(decodedServiceAccount);
         } catch (error) {
           throw new Error("Failed to parse service account from GMAIL_MAILER_SERVICE_ACCOUNT environment variable.");
         }
