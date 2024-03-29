@@ -29,23 +29,45 @@ npm install gmail-node-mailer
 ```typescript
 import { GmailMailer } from 'gmail-node-mailer';
 
-const mailer = new GmailMailer();
+// Assuming global.gmailClient is declared somewhere globally accessible within your application.
+declare global {
+  namespace NodeJS {
+    interface Global {
+      gmailClient: GmailMailer;
+    }
+  }
+}
 
-async function notifyServerStatus(status) {
+async function initializeMailer() {
+  const mailer = new GmailMailer();
   await mailer.initializeClient({
     gmailServiceAccountPath: './path/to/your-service-account.json',
   });
 
-  const message = status === 'start' ? 'Server is up and running.' : 'Server has been shut down.';
-  await mailer.sendEmail({
-    senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
-    recipientEmail: 'admin@example.com',
-    subject: `Server ${status} Notification`,
-    message,
-  });
+  // Setting the initialized mailer to a global variable
+  global.gmailClient = mailer;
 }
 
-notifyServerStatus('start').catch(console.error);
+async function notifyServerStatus(status: 'start' | 'stop') {
+  const message = status === 'start' ? 'Server is up and running.' : 'Server has been shut down.';
+  try {
+    await global.gmailClient.sendEmail({
+      senderEmail: "sender@example.com", // Or use process.env.GMAIL_MAILER_SENDER_EMAIL if configured
+      recipientEmail: 'admin@example.com',
+      subject: `Server ${status} Notification`,
+      message,
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+  }
+}
+
+// Initialize the GmailMailer client and then notify server status
+initializeMailer().then(() => {
+  notifyServerStatus('start').catch(console.error);
+});
+
+// Further down in your server code, you can use global.gmailClient for other email sending purposes
 ```
 
 #### Handling New Subscriptions and Renewals

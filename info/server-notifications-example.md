@@ -44,3 +44,4 @@ initializeMailer().then(() => {
 });
 
 // Further down in your server code, you can use global.gmailClient for other email sending purposes
+```
