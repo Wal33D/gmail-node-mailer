@@ -1,4 +1,3 @@
-
 # Gmail Node Mailer
 
 Simplify your email sending process within Node.js applications with `gmail-node-mailer`. This lightweight package harnesses the power of the Gmail API to send emails effortlessly. Whether you're sending a quick notification or a detailed newsletter, `gmail-node-mailer` makes it straightforward.
@@ -22,9 +21,17 @@ npm install gmail-node-mailer
 
 ### 2. Streamline Email Notifications with Your Server Workflow
 
-`gmail-node-mailer` is designed to seamlessly integrate into your server setup, enabling you to send emails for various events such as server start/stop notifications, error alerts, and to manage subscription events like new subscriptions or renewals. Here's how you can utilize it in real-world scenarios:
+`gmail-node-mailer` is designed to seamlessly integrate into your server setup, enabling you to send emails for various events such as server start/stop notifications, error alerts, and to manage subscription events like new subscriptions or renewals.
 
-#### Server Start/Stop Notifications
+## Detailed Usage Guide
+
+### Server Start/Stop Notifications
+
+Certainly! Here's the detailed portion you requested for the **Server Start/Stop Notifications** using `gmail-node-mailer`:
+
+### Server Start/Stop Notifications
+
+Seamlessly notify about server start or stop events using `gmail-node-mailer`. Here's an example on how to set up and send these notifications:
 
 ```typescript
 import { GmailMailer } from 'gmail-node-mailer';
@@ -43,7 +50,6 @@ async function initializeMailer() {
   await mailer.initializeClient({
     gmailServiceAccountPath: './path/to/your-service-account.json',
   });
-
   // Setting the initialized mailer to a global variable
   global.gmailClient = mailer;
 }
@@ -70,69 +76,141 @@ initializeMailer().then(() => {
 // Further down in your server code, you can use global.gmailClient for other email sending purposes
 ```
 
-#### Handling New Subscriptions and Renewals
+This snippet demonstrates how to set up `gmail-node-mailer` for sending notifications related to server start and stop events. It involves initializing the `GmailMailer` client with the necessary service account credentials and then using it to send email notifications.
+Certainly, here's a detailed example of how to handle new subscriptions and renewals with `gmail-node-mailer`. This example assumes you're integrating with a payment system like Stripe and want to send personalized emails upon new subscription sign-ups or subscription renewals.
 
-Integrate subscription handling in your payment system (e.g., Stripe) to send personalized welcome emails or renewal confirmations:
+```markdown
+### Handling New Subscriptions and Renewals
+
+Integrate subscription handling in your payment system to send personalized welcome emails or renewal confirmations. Utilizing `gmail-node-mailer`, you can automate the process of notifying customers about their subscription status, enhancing the overall customer experience. Below are examples for handling new subscriptions and renewals.
+
+#### New Subscription Welcome Emails
+
+When a new customer subscribes, sending a welcome email is a great way to start your relationship. Here's how you can set this up:
 
 ```typescript
-// handleNewSubscription.js
 import { GmailMailer } from 'gmail-node-mailer';
 
 export async function handleNewSubscription(customerEmail, subscriptionDetails) {
-  const mailer = new GmailMailer();
-  await mailer.initializeClient({
-    gmailServiceAccountPath: './path/to/your-service-account.json',
-  });
+    const mailer = new GmailMailer();
+    
+    await mailer.initializeClient({
+        gmailServiceAccountPath: './path/to/your-service-account.json',
+    });
 
-  // Customize your message based on subscription details
-  const htmlMessage = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0; }
-            .content { background-color: #fff; padding: 20px; }
-            h1 { color: #007bff; }
-        </style>
-    </head>
-    <body>
-        <div class="content">
-            <h1>Welcome to Your New Adventure!</h1>
-            <p>Dear Adventurer, thank you for joining us. Your journey starts now!</p>
-            <!-- Add more personalized content here -->
-        </div>
-    </body>
-    </html>
-  `;
+    const htmlMessage = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0; }
+                .content { background-color: #fff; padding: 20px; }
+                h1 { color: #007bff; }
+            </style>
+        </head>
+        <body>
+            <div class="content">
+                <h1>Welcome to Your New Adventure!</h1>
+                <p>Dear Adventurer, thank you for joining us. Your journey starts now!</p>
+                <!-- Add more personalized content here -->
+            </div>
+        </body>
+        </html>
+    `;
 
-  await mailer.sendEmail({
-    senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
-    recipientEmail: customerEmail,
-    subject: '🎉 Welcome to Your New Adventure!',
-    message: htmlMessage,
-  });
-}
-
-// handleSubscriptionRenewal.js
-export async function handleSubscriptionRenewal(customerEmail, renewalDetails) {
-  // Similar to handleNewSubscription but with a message tailored to renewals
+    await mailer.sendEmail({
+        senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
+        recipientEmail: customerEmail,
+        subject: '🎉 Welcome to Your New Adventure!',
+        message: htmlMessage,
+    });
 }
 ```
 
-## Effortless Email Composition with Auto-Detection
+#### Subscription Renewal Confirmations
 
-When crafting emails with `gmail-node-mailer`, you don't need to worry about the intricacies of email formatting or subject encoding. Our intelligent auto-detection feature takes care of it all, making the process super easy and straightforward for you. Here's how:
+Similarly, for subscription renewals, sending a confirmation email reaffirms the customer's value to your service. Here's a sample approach:
 
-### Subject Auto-Encoding
-- **Automatic Detection**: The function automatically detects whether your subject line is encoded. If it isn't, it encodes the subject for you, ensuring compatibility across all email clients.
-- **Seamless Experience**: You simply provide the subject, and we handle the rest. Whether it's plain text or needs encoding, your subject line will be perfectly formatted.
+```typescript
+// Assuming the GmailMailer is initialized similarly as in the new subscription example
 
-### HTML or Text Message Auto-Detection
-- **Content Flexibility**: Write your message in plain text or HTML — `gmail-node-mailer` automatically detects the format.
-- **Smart Handling**: For HTML content, the function wraps your message in the appropriate MIME type, ensuring it displays correctly in the recipient's email client. For plain text, it's sent as is, maintaining the simplicity of your message.
+export async function handleSubscriptionRenewal(customerEmail, renewalDetails) {
+    const htmlMessage = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0; }
+                .content { background-color: #fff; padding: 20px; }
+                h1 { color: #007bff; }
+            </style>
+        </head>
+        <body>
+            <div class="content">
+                <h1>Your Adventure Continues!</h1>
+                <p>Dear Adventurer, we're thrilled to have you with us for another year. Here's to more adventures together!</p>
+                <!-- Add renewal-specific content here -->
+            </div>
+        </body>
+        </html>
+    `;
 
-With `gmail-node-mailer`, sending emails is as easy as writing a message and hitting send. The auto-detection features ensure that your emails are always correctly formatted, whether you're sending a quick update or a beautifully designed newsletter.
+    // Use the initialized GmailMailer instance to send the email
+    await mailer.sendEmail({
+        senderEmail: process.env.GMAIL_MAILER_SENDER_EMAIL,
+        recipientEmail: customerEmail,
+        subject: '🎉 Thank You for Renewing Your Adventure!',
+        message: htmlMessage,
+    });
+}
+```
 
+These examples showcase how to integrate `gmail-node-mailer` for sending dynamic, personalized emails for new subscriptions and renewals, enhancing your automated communication strategy.
+
+## Advanced Initialization and Configuration
+
+`gmail-node-mailer` offers a flexible and powerful way to initialize and configure your email sending capabilities. Here's a deep dive into customizing the initialization:
+
+### Initializing with Service Account Credentials
+
+Authenticate using a Gmail service account for secure email sending. To do this, you need to initialize the `GmailMailer` with your service account details. This can be done by either directly providing the service account details or specifying a file path to a JSON file containing these credentials. Here's how you can accomplish this:
+
+```typescript
+import { GmailMailer } from 'gmail-node-mailer';
+
+const mailer = new GmailMailer();
+
+// Initialize using direct service account details or a file path
+await mailer.initializeClient({
+  gmailServiceAccount: {
+    client_email: 'your-service-account-email@your-project.iam.gserviceaccount.com',
+    private_key: '-----BEGIN PRIVATE KEY-----\n...your-private-key...\n-----END PRIVATE KEY-----\n'
+  },
+  // OR
+  gmailServiceAccountPath: './path/to/your-service-account.json',
+});
+```
+
+### Configuring Sender Email
+
+Specify and validate a default sender email address:
+
+```typescript
+import { emailConfig } from 'gmail-node-mailer/utils/emailConfig';
+
+// Set and validate the Gmail sender's email
+emailConfig.setGmailSenderEmail('your-email@gmail.com');
+
+// Optionally, you could include a validation check to ensure the email is correctly formatted
+// and meets specific criteria (this is a pseudo-code example for demonstration purposes)
+if (!emailConfig.validateEmailFormat('your-email@gmail.com')) {
+    console.error('Email format is invalid. Please use a valid Gmail address.');
+} else {
+    console.log('Sender email configured successfully.');
+}
+
+```
+### example sendEmail function response --> 
 ```typescript
 {
   sendMailResult: {
@@ -153,72 +231,27 @@ With `gmail-node-mailer`, sending emails is as easy as writing a message and hit
 }
 ```
 
-Enjoy the simplicity and power of `gmail-node-mailer`, where sending emails is made super easy, without compromising on flexibility or functionality.
+## Effortless Email Composition with Auto-Detection
 
+When crafting emails, `gmail-node-mailer` simplifies your workflow by auto-detecting email formatting and subject encoding.
 
+### Subject Auto-Encoding
 
-## Advanced Initialization and Configuration
+Automatically encodes the subject line ensuring compatibility across all email clients.
 
-`gmail-node-mailer` offers a flexible and powerful way to initialize and configure your email sending capabilities. Here's a deep dive into how you can customize the initialization to fit your specific needs:
+### HTML or Text Message Auto-Detection
 
-### Initializing with Service Account Credentials
-The package allows you to authenticate using a Gmail service account for secure email sending. You can either directly provide the service account details or specify a file path to a JSON file containing these credentials.
+Write your message in either format, and `gmail-node-mailer` will handle the rest, ensuring it's correctly formatted.
 
-```typescript
-import { GmailMailer } from 'gmail-node-mailer';
-
-const mailer = new GmailMailer();
-
-// Initialize using direct service account details or a file path
-await mailer.initializeClient({
-  gmailServiceAccount: {client_email: '...', private_key: '...'},
-  // OR
-  gmailServiceAccountPath: './path/to/your-service-account.json',
-});
-```
-
-### Configuring Sender Email
-You can specify a default sender email address that validates its format to ensure emails are sent from a valid Gmail account.
-
-```typescript
-import { emailConfig } from 'gmail-node-mailer/utils/emailConfig';
-
-// Set and validate the Gmail sender's email
-emailConfig.setGmailSenderEmail('your-email@gmail.com');
-```
-
-### Auto-Detection of Subject Encoding and Message Format
-`gmail-node-mailer` simplifies your workflow by auto-detecting whether your subject line needs MIME encoding and determining if your message is in plain text or HTML. This means you can focus on your message content without worrying about compatibility or formatting issues.
-
-- **Subject Encoding**: If your subject line includes special characters or non-ASCII text, it's automatically encoded for you.
-- **HTML or Text Messages**: Simply write your message, and `gmail-node-mailer` handles the rest. HTML messages are sent as multipart MIME messages, ensuring they render correctly across all email clients.
-
-### Error Handling and Response Insights
-Detailed error handling and response insights are provided, making it easy to debug and ensure your emails are sent successfully.
-
-```typescript
-try {
-  const sendMailResult = await mailer.sendEmail({ ... });
-  console.log(sendMailResult);
-} catch (error) {
-  console.error('Failed to send email:', error);
-}
-```
 ## Environment Configuration for `gmail-node-mailer`
 
-To seamlessly integrate `gmail-node-mailer` into your Node.js project, you must configure certain environment variables. These variables facilitate the authentication process with the Gmail API and define the sender's email address.
+To seamlessly integrate `gmail-node-mailer` into your Node.js project, configure the necessary environment variables.
 
 ### Required Environment Variables
 
-- **`GMAIL_MAILER_SENDER_EMAIL`**: Specifies the email address used as the sender for outgoing emails. Ensure this email address has access to the Gmail API and is allowed to send emails on behalf of your service account.
-
-    ```plaintext
-    GMAIL_MAILER_SENDER_EMAIL=no-reply@somnuslabs.com
-    ```
+- **`GMAIL_MAILER_SENDER_EMAIL`**: Specifies the sender's email address.
 
 ### Optional Environment Variables for Service Account Configuration
-
-Depending on your environment (development or production), you can choose to specify your service account credentials via a file path or directly as an environment variable:
 
 - **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**: Used primarily in development environments, this variable points to the local JSON file containing your service account credentials.
 
@@ -242,6 +275,20 @@ Depending on your environment (development or production), you can choose to spe
 - For **development**, using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` variable to reference a local file is often more convenient.
 - For **production**, embedding the service account credentials directly in `GMAIL_MAILER_SERVICE_ACCOUNT` facilitates deployment in environments where file access may be limited.
 
-This flexible approach ensures `gmail-node-mailer` can be easily configured to work in various environments, simplifying the transition from development to production.
-
 By leveraging these features, `gmail-node-mailer` ensures that sending emails through your Node.js applications is not only powerful but also incredibly easy and intuitive.
+
+## Additional Information and Examples
+
+For more detailed information on configuring `gmail-node-mailer`, including setting up environment variables, handling new subscriptions, and examples of server notifications, please refer to the following documents in the `/info` directory:
+
+- [Environment Variables Setup](/info/environment_variables.md): A guide on setting up and using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` and `GMAIL_MAILER_SERVICE_ACCOUNT` variables for development and production environments.
+
+- [Handling New Subscriptions Example](/info/handling-new-subscriptions-example.md): An example script showing how to integrate `gmail-node-mailer` for handling new subscription notifications.
+
+- [sendEmail Function Types](/info/sendEmail_function_types.md): Documentation on the `sendEmail` function, including parameters and expected results.
+
+- [Server Notifications Example](/info/server-notifications-example.md): A detailed example on setting up server start/stop notifications using `gmail-node-mailer`.
+
+- [Service Account Setup](/info/service_account_setup.md): Step-by-step instructions on setting up a Gmail service account for use with `gmail-node-mailer`.
+
+These documents provide additional insights and examples to help you effectively utilize `gmail-node-mailer` in your Node.js applications.
