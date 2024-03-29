@@ -21,13 +21,22 @@ export class GmailMailer {
   }
 
   /**
-   * Initializes the Gmail API client using the provided configuration. Validates the Gmail sender email
-   * and uses service account credentials for authentication. If the service account is not directly provided,
-   * it attempts to load it from a specified file path.
-   * 
-   * @param {IInitializeClientParams} config Configuration for Gmail client initialization including service account details and sender email.
-   * @returns {Promise<IInitializeClientResult>} The result of the initialization attempt, including status and any error messages.
-   */
+ * Initializes the Gmail API client using the provided or environment-based configuration. This method validates the
+ * Gmail sender's email address and authenticates using service account credentials. It supports multiple ways to provide
+ * these credentials: directly via parameters, loaded from a file path, or parsed from an environment variable.
+ * 
+ * If the service account credentials are not directly provided, the method first attempts to load them from the specified
+ * file path. If no path is provided or if the file does not contain valid credentials, it then attempts to parse the
+ * credentials from the `GMAIL_MAILER_SERVICE_ACCOUNT` environment variable. This environment variable should contain
+ * the JSON representation of the service account credentials.
+ * 
+ * This flexible initialization approach allows the GmailMailer to be configured in various deployment environments,
+ * supporting both file-based configurations for development and direct JSON configurations for environments where
+ * file access may be restricted or inconvenient.
+ * 
+ * @param {IInitializeClientParams} config - Configuration for Gmail client initialization, including service account details and sender email.
+ * @returns {Promise<IInitializeClientResult>} - The result of the initialization attempt, including the status, initialized Gmail client instance, and any error messages.
+ */
 
   async initializeClient({
     gmailServiceAccount = gmailServiceAccountConfig.getServiceAccount(),
@@ -38,12 +47,12 @@ export class GmailMailer {
       if (!gmailSenderEmail || !isValidEmail({ email: gmailSenderEmail }).result) {
         throw new Error("Invalid or missing Gmail sender's email.");
       }
-
+  
       // If gmailServiceAccountPath is not provided, use the environment variable
       if (!gmailServiceAccountPath) {
         gmailServiceAccountPath = process.env.GMAIL_MAILER_SERVICE_ACCOUNT_PATH;
       }
-
+  
       if (!gmailServiceAccount && gmailServiceAccountPath) {
         const serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
         if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
@@ -51,11 +60,20 @@ export class GmailMailer {
         }
         gmailServiceAccount = serviceAccountResult.serviceAccount; // Set the gmailServiceAccount with the loaded service account
       }
-
+  
+      // Check for service account JSON in GMAIL_MAILER_SERVICE_ACCOUNT environment variable as a fallback
+      if (!gmailServiceAccount && process.env.GMAIL_MAILER_SERVICE_ACCOUNT) {
+        try {
+          gmailServiceAccount = JSON.parse(process.env.GMAIL_MAILER_SERVICE_ACCOUNT);
+        } catch (error) {
+          throw new Error("Failed to parse service account from GMAIL_MAILER_SERVICE_ACCOUNT environment variable.");
+        }
+      }
+  
       if (!gmailServiceAccount) {
         throw new Error("Service account configuration is missing.");
       }
-
+  
       const jwtClient = new google.auth.JWT(
         gmailServiceAccount.client_email,
         undefined,
@@ -63,10 +81,10 @@ export class GmailMailer {
         ['https://www.googleapis.com/auth/gmail.send'],
         gmailSenderEmail,
       );
-
+  
       await jwtClient.authorize();
       this.gmailClient = google.gmail({ version: 'v1', auth: jwtClient });
-
+  
       return {
         status: true,
         gmailClient: this.gmailClient,
@@ -80,7 +98,7 @@ export class GmailMailer {
       };
     }
   }
-
+  
   /**
    * Sends an email using the initialized Gmail API client. It validates the sender email, ensures a subject
    * is provided, and verifies that the message content is present before proceeding.
