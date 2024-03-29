@@ -6,3 +6,6 @@
 
 # Ignore zip archives
 *.zip
+
+# Ignore build directory (if not already ignored in .gitignore)
+dist/

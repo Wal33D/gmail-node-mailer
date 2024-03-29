@@ -15,3 +15,9 @@ dist/**
 
 # Ignore zip files, often used for archiving or distribution
 *.zip
+
+# Ignore .npmrc file containing sensitive information
+.npmrc
+
+# Ignore private directory (assuming it contains sensitive information)
+/private
