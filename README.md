@@ -182,11 +182,9 @@ Specify and validate a default sender email address:
 ```typescript
 import { emailConfig } from 'gmail-node-mailer/utils/emailConfig';
 
-// Set and validate the Gmail sender's email
+// Set and validate the Gmail sender's email, or optionally declare the the GMAIL_MAILER_SENDER_EMAIL in your .env file 
 emailConfig.setGmailSenderEmail('your-email@gmail.com');
 
-// Optionally, you could include a validation check to ensure the email is correctly formatted
-// and meets specific criteria (this is a pseudo-code example for demonstration purposes)
 if (!emailConfig.validateEmailFormat('your-email@gmail.com')) {
     console.error('Email format is invalid. Please use a valid Gmail address.');
 } else {
@@ -225,33 +223,23 @@ To seamlessly integrate `gmail-node-mailer` into your Node.js project, configure
 
 ### Optional Environment Variables for Service Account Configuration
 - **`GMAIL_MAILER_SENDER_EMAIL`**: Specifies the sender's email address.
+- **`GMAIL_MAILER_SERVICE_ACCOUNT`**: In production environments, or when direct file access is restricted, you may opt to provide your service account credentials as a JSON string directly within an environment variable.
 - **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**: Used primarily in development environments, this variable points to the local JSON file containing your service account credentials.
 
+- **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**:
     ```plaintext
     GMAIL_MAILER_SERVICE_ACCOUNT_PATH=./private/somnus_gmail_service_account.json
     ```
-
-    Ensure the path is correctly specified relative to the root of your project.
-
-- **`GMAIL_MAILER_SERVICE_ACCOUNT`**: In production environments, or when direct file access is restricted, you may opt to provide your service account credentials as a JSON string directly within an environment variable.
-
+    Note: Ensure the path is correctly specified relative to the root of your project.
+- **`GMAIL_MAILER_SERVICE_ACCOUNT`**:
     ```plaintext
     GMAIL_MAILER_SERVICE_ACCOUNT={"type":"service_account","project_id":"...","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n","client_email":"....iam.gserviceaccount.com","client_id":"...","auth_uri":"...","token_uri":"...","auth_provider_x509_cert_url":"...","client_x509_cert_url":"...","universe_domain":"googleapis.com"}
-
     ```
-
     Note: Ensure special characters in the JSON (like newlines in the private key) are properly escaped. This example simplifies the actual process for readability; typically, you'll need to handle escaping or format the JSON appropriately.
-
-### Choosing the Right Configuration
-
-- For **development**, using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` variable to reference a local file is often more convenient.
-- For **production**, embedding the service account credentials directly in `GMAIL_MAILER_SERVICE_ACCOUNT` facilitates deployment in environments where file access may be limited.
-
-By leveraging these features, `gmail-node-mailer` ensures that sending emails through your Node.js applications is not only powerful but also incredibly easy and intuitive.
 
 ## Additional Information and Examples
 
-For more detailed information on configuring `gmail-node-mailer`, including setting up environment variables, handling new subscriptions, and examples of server notifications, please refer to the following documents in the `/info` directory:
+For more detailed information on configuring `gmail-node-mailer`, including setting up environment variables, sample code, please refer to the following documents in the `/info` directory:
 
 - [Environment Variables Setup](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/environment_variables.md): A guide on setting up and using the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` and `GMAIL_MAILER_SERVICE_ACCOUNT` variables for development and production environments.
 
