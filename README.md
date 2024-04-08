@@ -217,25 +217,35 @@ if (!emailConfig.validateEmailFormat('your-email@gmail.com')) {
 ### HTML or Plain Text Auto-Detection
 Automatically encodes the subject line ensuring compatibility across all email clients.
 Write your message in either format, and `gmail-node-mailer` will handle the rest, ensuring it's correctly formatted.
+To enhance clarity and consistency in the readme section for environment configuration, consider the revised version below:
+
+---
 
 ## Environment Configuration for `gmail-node-mailer`
-To seamlessly integrate `gmail-node-mailer` into your Node.js project, configure the following environment variables or pass them in upon instantiation 
+
+To ensure smooth integration of `gmail-node-mailer` into your Node.js project, it's crucial to configure the environment variables detailed below. These variables can be set directly in your environment or passed during the instantiation of `gmail-node-mailer`.
 
 ### Optional Environment Variables for Service Account Configuration
-- **`GMAIL_MAILER_SENDER_EMAIL`**: Specifies the sender's email address.
-- **`GMAIL_MAILER_SERVICE_ACCOUNT`**: In production environments, or when direct file access is restricted, you may opt to provide your service account credentials as a JSON string directly within an environment variable.
-- **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**: Used primarily in development environments, this variable points to the local JSON file containing your service account credentials.
 
-- **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**:
-    ```plaintext
-    GMAIL_MAILER_SERVICE_ACCOUNT_PATH=./private/somnus_gmail_service_account.json
-    ```
-    Note: Ensure the path is correctly specified relative to the root of your project.
-- **`GMAIL_MAILER_SERVICE_ACCOUNT`**:
-    ```plaintext
-    GMAIL_MAILER_SERVICE_ACCOUNT={"type":"service_account","project_id":"...","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n","client_email":"....iam.gserviceaccount.com","client_id":"...","auth_uri":"...","token_uri":"...","auth_provider_x509_cert_url":"...","client_x509_cert_url":"...","universe_domain":"googleapis.com"}
-    ```
-    Note: Ensure special characters in the JSON (like newlines in the private key) are properly escaped. This example simplifies the actual process for readability; typically, you'll need to handle escaping or format the JSON appropriately.
+Configure the following optional environment variables for detailed control over service account usage:
+
+- **`GMAIL_MAILER_SENDER_EMAIL`**: Defines the email address from which emails will be sent.
+
+- **`GMAIL_MAILER_SERVICE_ACCOUNT`**: In scenarios such as production environments or instances where direct file access is not feasible, this variable allows you to input your service account credentials as a JSON string within an environment variable. 
+
+  Example usage:
+  ```plaintext
+  GMAIL_MAILER_SERVICE_ACCOUNT={"type":"service_account","project_id":"...","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\\n...\\n-----END PRIVATE KEY-----\\n","client_email":"....iam.gserviceaccount.com","client_id":"...","auth_uri":"...","token_uri":"...","auth_provider_x509_cert_url":"...","client_x509_cert_url":"..."}
+  ```
+  **Note**: Ensure that special characters within the JSON (e.g., newlines in the private key) are properly escaped. While this example aims for readability, real-world usage might require meticulous JSON formatting or escaping.
+
+- **`GMAIL_MAILER_SERVICE_ACCOUNT_PATH`**: Primarily for development environments, this variable designates the path to the local JSON file containing your service account credentials. 
+
+  Example usage:
+  ```plaintext
+  GMAIL_MAILER_SERVICE_ACCOUNT_PATH=./private/somnus_gmail_service_account.json
+  ```
+  **Note**: Verify that the specified path is accurate, relative to your project's root directory.
 
 ## Additional Information and Examples
 
