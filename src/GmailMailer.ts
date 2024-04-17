@@ -129,38 +129,38 @@ export class GmailMailer {
    */
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
-      return generateErrorResponse({ message: 'The Gmail client has not been initialized. Please call initializeClient first.' });
+        return generateErrorResponse({ message: 'The Gmail client has not been initialized. Please call initializeClient first.' });
     }
 
     const senderEmail = params.senderEmail || emailConfig.getGmailSenderEmail();
     if (!senderEmail) {
-      return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
+        return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
     }
 
     if (!params.subject) {
-      return generateErrorResponse({ message: 'A subject (text or encoded) must be provided.' });
+        return generateErrorResponse({ message: 'A subject (text or encoded) must be provided.' });
     }
 
     if (!params.message) {
-      return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
+        return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
     }
 
-    const adjustedParams = { ...params, senderEmail };
-
-    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
+    // Ensure all parameters including attachments are passed to the sendEmailFunction
+    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, params);
 
     if (!sendResult.sent) {
-      return generateErrorResponse({ message: sendResult.message });
+        return generateErrorResponse({ message: sendResult.message });
     } else {
-      return {
-        sent: sendResult.sent,
-        status: sendResult.gmailResponse?.status || null,
-        statusText: sendResult.gmailResponse?.statusText || null,
-        responseUrl: sendResult.gmailResponse?.request?.responseURL || null,
-        message: sendResult.message,
-        gmailResponse: sendResult.gmailResponse || null,
-      };
+        return {
+            sent: sendResult.sent,
+            status: sendResult.gmailResponse?.status || null,
+            statusText: sendResult.gmailResponse?.statusText || null,
+            responseUrl: sendResult.gmailResponse?.request?.responseURL || null,
+            message: sendResult.message,
+            gmailResponse: sendResult.gmailResponse || null,
+        };
     }
-  }
+}
+
 
 }
