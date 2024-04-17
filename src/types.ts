@@ -1,10 +1,17 @@
 import { google } from 'googleapis';
 
+export interface IAttachment {
+    filename: string;
+    mimeType: string;
+    content: string; 
+}
+
 export interface ISendEmailParams {
-    recipientEmail: string;
     senderEmail: string;
+    recipientEmail: string;
     subject: string;
     message: string;
+    attachments?: IAttachment[];
 }
 
 export interface ISendEmailResponse {

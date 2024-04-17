@@ -13,26 +13,43 @@ import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
  * @param {ISendEmailParams} params Parameters required for sending the email, including sender, recipient, subject, and message content.
  * @returns {Promise<ISendEmailFunctionResponse>} The result of the email sending operation, including whether the email was sent successfully, the status message, and the raw Gmail API response.
  */
-export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
+export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     try {
+        const { senderEmail, recipientEmail, subject, message, attachments } = params;
         const { encodedSubject } = encodeEmailSubject({ subjectLine: subject });
-
-        // Determine if the message is HTML or plain text
         const { status: isHtml } = isHtmlMessage({ message });
 
+        let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
-        
+
+        // Start with a multipart/mixed container if there are attachments
+        mimeMessage += attachments && attachments.length > 0
+            ? `Content-Type: multipart/mixed; boundary=${boundary}\r\n\r\n`
+            : `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n`;
+
         if (isHtml) {
-            // Construct MIME message based on HTML check result
-            const boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
-            mimeMessage += `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n` +
-                `--${boundary}\r\n` +
+            mimeMessage += `--${boundary}\r\n` +
                 `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
-                `${message}\r\n` +
-                `--${boundary}--`;
+                `${message}\r\n`;
         } else {
-            mimeMessage += `Content-Type: text/plain; charset=UTF-8\r\n\r\n${message}`;
+            mimeMessage += `--${boundary}\r\n` +
+                `Content-Type: text/plain; charset=UTF-8\r\n\r\n` +
+                `${message}\r\n`;
         }
+
+        // Add each attachment
+        if (attachments) {
+            attachments.forEach(attachment => {
+                mimeMessage += `--${boundary}\r\n` +
+                    `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"\r\n` +
+                    `Content-Disposition: attachment; filename="${attachment.filename}"\r\n` +
+                    `Content-Transfer-Encoding: base64\r\n\r\n` +
+                    `${attachment.content}\r\n`;
+            });
+        }
+
+        // End of MIME message
+        mimeMessage += `--${boundary}--`;
 
         const { isEncoded, encodedContent } = encodeMimeMessageToBase64Url({ mimeMessage });
 
