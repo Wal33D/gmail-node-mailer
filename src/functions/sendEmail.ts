@@ -1,7 +1,7 @@
 import { gmail_v1 } from 'googleapis';
 import { encodeEmailSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
-import {ensureBase64Encoded} from '../utils/ensureBase64Encoded';
+import { ensureBase64Encoded } from '../utils/ensureBase64Encoded';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
