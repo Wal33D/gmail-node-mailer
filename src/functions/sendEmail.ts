@@ -1,6 +1,7 @@
 import { gmail_v1 } from 'googleapis';
 import { encodeEmailSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
+import {ensureBase64Encoded} from '../utils/ensureBase64Encoded';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
@@ -22,11 +23,12 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISe
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
-        // Start with a multipart/mixed container if there are attachments
+        // Define the top level MIME type based on whether there are attachments
         mimeMessage += attachments && attachments.length > 0
             ? `Content-Type: multipart/mixed; boundary=${boundary}\r\n\r\n`
             : `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n`;
 
+        // Add the HTML or plain text part
         if (isHtml) {
             mimeMessage += `--${boundary}\r\n` +
                 `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
@@ -40,11 +42,12 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISe
         // Add each attachment
         if (attachments) {
             attachments.forEach(attachment => {
+                const encodedContent = ensureBase64Encoded(attachment.content);
                 mimeMessage += `--${boundary}\r\n` +
                     `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"\r\n` +
                     `Content-Disposition: attachment; filename="${attachment.filename}"\r\n` +
                     `Content-Transfer-Encoding: base64\r\n\r\n` +
-                    `${attachment.content}\r\n`;
+                    `${encodedContent}\r\n`;
             });
         }
 
