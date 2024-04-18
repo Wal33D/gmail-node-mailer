@@ -1,34 +1,22 @@
 import { gmail_v1 } from 'googleapis';
-import { encodeEmailSubject } from '../utils/encodeSubject';
 import { isHtmlMessage } from '../utils/isHtmlMessage';
-import { ensureBase64Encoded } from '../utils/ensureBase64Encoded';
+import { encodeEmailSubject } from '../utils/encodeSubject';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
-/**
- * Sends an email using the Gmail API client, supporting both HTML and plain text content. It automatically
- * MIME encodes the subject if it isn't already and determines whether the message content is HTML or plain text
- * to format the email appropriately.
- * 
- * @param {gmail_v1.Gmail} gmailClient The Gmail API client instance.
- * @param {ISendEmailParams} params Parameters required for sending the email, including sender, recipient, subject, and message content.
- * @returns {Promise<ISendEmailFunctionResponse>} The result of the email sending operation, including whether the email was sent successfully, the status message, and the raw Gmail API response.
- */
-export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
+export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message, attachments }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     try {
-        const { senderEmail, recipientEmail, subject, message, attachments } = params;
         const { encodedSubject } = encodeEmailSubject({ subjectLine: subject });
         const { status: isHtml } = isHtmlMessage({ message });
 
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
-        // Define the top level MIME type based on whether there are attachments
+        // Determine MIME type based on whether there are attachments
         mimeMessage += attachments && attachments.length > 0
             ? `Content-Type: multipart/mixed; boundary=${boundary}\r\n\r\n`
             : `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n`;
 
-        // Add the HTML or plain text part
         if (isHtml) {
             mimeMessage += `--${boundary}\r\n` +
                 `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
@@ -42,16 +30,15 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISe
         // Add each attachment
         if (attachments) {
             attachments.forEach(attachment => {
-                const encodedContent = ensureBase64Encoded(attachment.content);
                 mimeMessage += `--${boundary}\r\n` +
                     `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"\r\n` +
                     `Content-Disposition: attachment; filename="${attachment.filename}"\r\n` +
                     `Content-Transfer-Encoding: base64\r\n\r\n` +
-                    `${encodedContent}\r\n`;
+                    `${attachment.content}\r\n`;
             });
         }
 
-        // End of MIME message
+        // Close the MIME message
         mimeMessage += `--${boundary}--`;
 
         const { isEncoded, encodedContent } = encodeMimeMessageToBase64Url({ mimeMessage });
