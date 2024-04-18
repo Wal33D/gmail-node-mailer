@@ -108,21 +108,23 @@ export class GmailMailer {
     }
   }
 
-  /**
-   * Sends an email using the initialized Gmail API client. This function performs several checks before sending an email:
-   * 1. Ensures the Gmail client is initialized.
-   * 2. Validates whether the sender email is configured. If not configured, it defaults to the configured sender email.
-   * 3. Checks if a subject is provided. If no subject is provided, it logs this occurrence and sets the subject to 'No Subject'.
-   * 4. Verifies that the message content is not empty.
-   * If any of these checks fail, an appropriate error response is generated. Otherwise, it proceeds to send the email.
-   * 
-   * @param {ISendEmailParams} params - Parameters for sending the email, including:
-   *   - senderEmail: Email address of the sender. If not provided, defaults to the configured sender email.
-   *   - recipientEmail: Email address of the recipient.
-   *   - subject: Subject of the email, can be plain text or encoded. Defaults to 'No Subject' if not provided.
-   *   - message: Content of the email, which can be either plain text or HTML.
-   *   - attachments (optional): Array of attachment objects, each containing filename, mimeType, and content
-   */
+/**
+ * Sends an email using the initialized Gmail API client. This function performs several checks before sending an email:
+ * - It ensures that the Gmail client is initialized.
+ * - It checks if the sender email is configured; if not, it uses a default sender email from the configuration.
+ * - It verifies if a subject is provided. If not, it logs this occurrence and sets the subject to 'No Subject'.
+ * - It ensures that the message content is not empty.
+ * If any of these preliminary checks fail, it generates an appropriate error response. Otherwise, it proceeds to send the email.
+ * 
+ * @param {ISendEmailParams} params - Parameters for sending the email, including:
+ *   - senderEmail: Email address of the sender. If not provided, defaults to the configured sender email.
+ *   - recipientEmail: Email address of the recipient.
+ *   - subject: Subject of the email. If not provided, defaults to 'No Subject'. This field can be plain text or encoded.
+ *   - message: Content of the email, which can be either plain text or HTML.
+ *   - attachments (optional): Array of attachment objects, each containing a filename, mimeType, and content in base64 encoding.
+ * @returns {Promise<ISendEmailResponse>} The result of the email sending operation, detailing success or failure with an appropriate message.
+ */
+
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
       return generateErrorResponse({ message: 'The Gmail client has not been initialized. Please call initializeClient first.' });
@@ -134,17 +136,16 @@ export class GmailMailer {
       return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
     }
 
-    if (!params.subject) {
-      console.error(`No subject provided for the email to ${params.recipientEmail}.`);
-      params.subject = 'No Subject';
-    }
-
     if (!params.message) {
       console.error('At least one of textMessage or htmlMessage must be provided.')
       return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
     }
 
-    console.log(params.attachments)
+    if (!params.subject) {
+      console.error(`No subject provided for the email to ${params.recipientEmail}.`);
+      params.subject = 'No Subject';
+    }
+
     const adjustedParams = { ...params, senderEmail };
 
     const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
