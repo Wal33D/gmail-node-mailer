@@ -36,12 +36,11 @@ With the new attachment support, `gmail-node-mailer` allows you to include files
 import { GmailMailer } from 'gmail-node-mailer';
 
 async function sendEmailWithAttachment() {
-    const mailer = new GmailMailer();
-    await mailer.initializeClient({
-        gmailSenderEmail: 'example@your-domain.com',
-        gmailServiceAccountPath: './path/to/your-service-account.json',
-    });
-
+  const mailer = new GmailMailer();
+  await mailer.initializeClient({
+    gmailSenderEmail:'example@your-domain.com',
+    gmailServiceAccountPath: './path/to/your-service-account.json',
+  });
     const attachments = [{
         filename: 'Invoice.pdf',
         mimeType: 'application/pdf',
@@ -49,7 +48,6 @@ async function sendEmailWithAttachment() {
     }];
 
     await mailer.sendEmail({
-        senderEmail: 'example@your-domain.com',
         recipientEmail: 'customer@example.com',
         subject: 'Your Invoice',
         message: 'Please find attached your invoice.',
@@ -59,7 +57,6 @@ async function sendEmailWithAttachment() {
 
 sendEmailWithAttachment().catch(console.error);
 ```
-
 
 ### Server Start/Stop Notifications
 
