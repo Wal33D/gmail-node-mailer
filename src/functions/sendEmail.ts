@@ -12,11 +12,10 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
-        // Determine MIME type based on whether there are attachments
-        mimeMessage += attachments && attachments.length > 0
-            ? `Content-Type: multipart/mixed; boundary=${boundary}\r\n\r\n`
-            : `Content-Type: multipart/alternative; boundary=${boundary}\r\n\r\n`;
+        // Define the top level MIME type based on whether there are attachments
+        mimeMessage += `Content-Type: ${attachments && attachments.length > 0 ? "multipart/mixed" : "multipart/alternative"}; boundary=${boundary}\r\n\r\n`;
 
+        // Add the main message part (HTML or plain text)
         if (isHtml) {
             mimeMessage += `--${boundary}\r\n` +
                 `Content-Type: text/html; charset=UTF-8\r\n\r\n` +
@@ -28,7 +27,7 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
         }
 
         // Add each attachment
-        if (attachments) {
+        if (attachments && attachments.length > 0) {
             attachments.forEach(attachment => {
                 mimeMessage += `--${boundary}\r\n` +
                     `Content-Type: ${attachment.mimeType}; name="${attachment.filename}"\r\n` +

@@ -122,9 +122,9 @@ export class GmailMailer {
 
   /**
    * Sends an email using the initialized Gmail API client. It validates the sender email, ensures a subject
-   * is provided, and verifies that the message content is present and optionally attachments, before proceeding.
+   * is provided, and verifies that the message content is present before proceeding.
    * 
-   * @param {ISendEmailParams} params Parameters for sending the email, including recipient, sender, subject, message, and optionally attachments.
+   * @param {ISendEmailParams} params Parameters for sending the email, including recipient, sender, subject, and message.
    * @returns {Promise<ISendEmailResponse>} The result of the email sending operation, including status and any response details.
    */
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
@@ -134,19 +134,24 @@ export class GmailMailer {
 
     const senderEmail = params.senderEmail || emailConfig.getGmailSenderEmail();
     if (!senderEmail) {
+      console.error('Sender email not configured. Please provide a sender email.')
       return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
     }
 
     if (!params.subject) {
+      console.error('A subject (text or encoded) must be provided.');
       return generateErrorResponse({ message: 'A subject (text or encoded) must be provided.' });
     }
 
     if (!params.message) {
+      console.error('At least one of textMessage or htmlMessage must be provided.')
       return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
     }
 
-    // Ensure all parameters including any attachments are passed to the sendEmailFunction
-    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, params);
+    console.log(params.attachments)
+    const adjustedParams = { ...params, senderEmail };
+
+    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
 
     if (!sendResult.sent) {
       return generateErrorResponse({ message: sendResult.message });
