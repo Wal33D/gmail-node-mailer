@@ -161,7 +161,7 @@ export class GmailMailer {
         status: sendResult.gmailResponse?.status || null,
         statusText: sendResult.gmailResponse?.statusText || null,
         responseUrl: sendResult.gmailResponse?.request?.responseURL || null,
-        message: 'test',
+        message: sendResult.message,
         gmailResponse: sendResult.gmailResponse || null,
       };
     }
