@@ -122,9 +122,9 @@ export class GmailMailer {
 
   /**
    * Sends an email using the initialized Gmail API client. It validates the sender email, ensures a subject
-   * is provided, and verifies that the message content is present before proceeding.
+   * is provided, and verifies that the message content is present and optionally attachments, before proceeding.
    * 
-   * @param {ISendEmailParams} params Parameters for sending the email, including recipient, sender, subject, and message.
+   * @param {ISendEmailParams} params Parameters for sending the email, including recipient, sender, subject, message, and optionally attachments.
    * @returns {Promise<ISendEmailResponse>} The result of the email sending operation, including status and any response details.
    */
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
@@ -145,9 +145,8 @@ export class GmailMailer {
       return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
     }
 
-    const adjustedParams = { ...params, senderEmail };
-
-    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
+    // Ensure all parameters including any attachments are passed to the sendEmailFunction
+    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, params);
 
     if (!sendResult.sent) {
       return generateErrorResponse({ message: sendResult.message });
