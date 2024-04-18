@@ -4,6 +4,14 @@ import { encodeEmailSubject } from '../utils/encodeSubject';
 import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
 import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
+/**
+ * This function sends an email using the Gmail API with optional HTML content and attachments.
+ * It constructs a MIME message based on whether there are attachments and whether the message is HTML.
+ *
+ * @param {gmail_v1.Gmail} gmailClient - The Gmail client used to send the email.
+ * @param {ISendEmailParams} params - The email parameters, including sender, recipient, subject, message, and optional attachments.
+ * @returns {Promise<ISendEmailFunctionResponse>} - The result of the email sending operation, indicating whether the email was successfully sent and the response from Gmail.
+ */
 export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message, attachments }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     try {
         // Use 'No Subject' if no subject is provided
