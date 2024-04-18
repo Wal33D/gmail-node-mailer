@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 export interface ISendEmailParams {
     recipientEmail: string;
     senderEmail?: string;
-    subject: string;
+    subject?: string;
     message: string;
     attachments?: any[];
 }

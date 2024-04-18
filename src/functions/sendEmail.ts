@@ -6,7 +6,9 @@ import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
 
 export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message, attachments }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     try {
-        const { encodedSubject } = encodeEmailSubject({ subjectLine: subject });
+        // Use 'No Subject' if no subject is provided
+        const effectiveSubject = subject || 'No Subject';
+        const { encodedSubject } = encodeEmailSubject({ subjectLine: effectiveSubject });
         const { status: isHtml } = isHtmlMessage({ message });
 
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);

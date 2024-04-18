@@ -13,51 +13,39 @@ import {
   ISendEmailResponse
 } from './types';
 
+/**
+ * The GmailMailer class encapsulates methods for initializing a Gmail API client and sending emails through it.
+ * It handles authentication via service account credentials and provides a method to send emails with optional attachments.
+ * This class supports multiple credential provisioning methods for a versatile environment adaptation, including direct parameters,
+ * file paths, and environment variables.
+ *
+ * Key functionalities:
+ * - Initializes the Gmail API client using provided or environment-based service account credentials.
+ * - Sends emails using the initialized Gmail client, validating necessary input parameters such as sender's email,
+ *   subject, and message content. It supports sending emails with attachments.
+ *
+ * Error Handling:
+ * - The class provides detailed error responses for each operation, ensuring that initialization and email sending
+ *   failures are clearly communicated.
+ *
+ * Usage:
+ * - In a development environment, it is suggested to use local `serviceaccount.json` files to initialize the client.
+ * - In a production environment, leveraging environment variables to provide service account details is recommended
+ *   for enhanced security and convenience.
+ *
+ * Examples of initialization:
+ * - For local testing: `initializeClient({ gmailServiceAccountPath: './path/to/serviceaccount.json' })`
+ * - For production: `initializeClient({ gmailServiceAccountPath: '/secure/path/to/serviceaccount.json' })`
+ * - Alternatively, set `GMAIL_MAILER_SERVICE_ACCOUNT` in your environment variables.
+ *
+ * This class simplifies handling Gmail interactions and abstracts the complexities of direct API management from the user.
+ */
 export class GmailMailer {
   private gmailClient: gmail_v1.Gmail | null = null;
 
   constructor(gmailClient?: gmail_v1.Gmail) {
     this.gmailClient = gmailClient || null;
   }
-
-/**
- * Initializes the Gmail API client, supporting multiple credential provisioning methods for versatile environment adaptation. Key points:
- * - Validates the sender's email.
- * - Enables credential provisioning through:
- *   - Parameters directly passed to the method.
- *   - File paths, specified either through method parameters or environment variables.
- *   - Environment variables, offering direct JSON input or file path referencing.
- * 
- * Credentials can be provided in these ways:
- * - As JSON with `gmailServiceAccount` or through the `GMAIL_MAILER_SERVICE_ACCOUNT` environment variable.
- * - Via a file path with `gmailServiceAccountPath` or the `GMAIL_MAILER_SERVICE_ACCOUNT_PATH` environment variable.
- * 
- * The method attempts to authenticate using provided or derived service account credentials, 
- * creating a JWT client for Gmail API interactions. It prioritizes direct credentials, 
- * then file-based, and finally environment variables if others are unavailable.
- * 
- * Error handling and outcomes include:
- * - Validation for sender email, parsing service account credentials, and checking for missing configurations.
- * - Successful initialization returns:
- *   - `{ status: true, gmailClient: <Gmail API client>, message: "Gmail API client initialized successfully." }`.
- * - Failure due to errors (invalid email, parsing failures, missing configurations) results in:
- *   - `{ status: false, gmailClient: null, message: <error message> }`. 
- * 
- * Suggested Usage:
- * 
- * Development Environment:
- * - Use the `gmailServiceAccountPath` to point to your local `serviceaccount.json` file for ease of testing.
- * - Example: `initializeClient({ gmailServiceAccountPath: './path/to/serviceaccount.json' })`
- * 
- * Production Environment:
- * - Set the `GMAIL_MAILER_SERVICE_ACCOUNT` environment variable with your service account JSON. This method is secure and convenient for cloud deployments and can be encrypted in many cloud platforms.
- * - Alternatively, if available, use a secure path accessible to your production environment for `gmailServiceAccountPath`.
- * - Example: Set `GMAIL_MAILER_SERVICE_ACCOUNT` in your environment variables, or use `initializeClient({ gmailServiceAccountPath: '/secure/path/to/serviceaccount.json' })`
- * 
- * 
- * @param {IInitializeClientParams} config - Includes service account details and sender email.
- * @returns {Promise<IInitializeClientResult>} - Result of the initialization process, encapsulating success or failure status, the Gmail client instance, and an error message if applicable.
- */
 
   async initializeClient({
     gmailServiceAccount = gmailServiceAccountConfig.getServiceAccount(),
@@ -121,11 +109,19 @@ export class GmailMailer {
   }
 
   /**
-   * Sends an email using the initialized Gmail API client. It validates the sender email, ensures a subject
-   * is provided, and verifies that the message content is present before proceeding.
+   * Sends an email using the initialized Gmail API client. This function performs several checks before sending an email:
+   * 1. Ensures the Gmail client is initialized.
+   * 2. Validates whether the sender email is configured. If not configured, it defaults to the configured sender email.
+   * 3. Checks if a subject is provided. If no subject is provided, it logs this occurrence and sets the subject to 'No Subject'.
+   * 4. Verifies that the message content is not empty.
+   * If any of these checks fail, an appropriate error response is generated. Otherwise, it proceeds to send the email.
    * 
-   * @param {ISendEmailParams} params Parameters for sending the email, including recipient, sender, subject, and message.
-   * @returns {Promise<ISendEmailResponse>} The result of the email sending operation, including status and any response details.
+   * @param {ISendEmailParams} params - Parameters for sending the email, including:
+   *   - senderEmail: Email address of the sender. If not provided, defaults to the configured sender email.
+   *   - recipientEmail: Email address of the recipient.
+   *   - subject: Subject of the email, can be plain text or encoded. Defaults to 'No Subject' if not provided.
+   *   - message: Content of the email, which can be either plain text or HTML.
+   *   - attachments (optional): Array of attachment objects, each containing filename, mimeType, and content
    */
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
@@ -139,8 +135,8 @@ export class GmailMailer {
     }
 
     if (!params.subject) {
-      console.error('A subject (text or encoded) must be provided.');
-      return generateErrorResponse({ message: 'A subject (text or encoded) must be provided.' });
+      console.error(`No subject provided for the email to ${params.recipientEmail}.`);
+      params.subject = 'No Subject';
     }
 
     if (!params.message) {
