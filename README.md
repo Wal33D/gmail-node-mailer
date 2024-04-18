@@ -7,11 +7,11 @@ Simplify your email sending process within Node.js applications with `gmail-node
 **npm Package:** [gmail-node-mailer on npm](https://www.npmjs.com/package/gmail-node-mailer)
 
 ## Quick Features
-
 - 🚀 Quick setup with service account credentials.
 - 📧 Validate and send emails with ease.
 - 🎨 Supports both plain text and HTML content.
 - 🔧 Easy configuration for service accounts and sender emails.
+- 📎 **New Functionality: Attachment Support** - Send attachments with your emails effortlessly.
 
 ## Get Started in Seconds
 
@@ -28,6 +28,38 @@ npm install gmail-node-mailer
 `gmail-node-mailer` is designed to seamlessly integrate into your server setup, enabling you to send emails for various events such as server start/stop notifications, error alerts, and to manage subscription events like new subscriptions or renewals.
 
 ## Detailed Usage Guide
+### Sending Emails with Attachments
+
+With the new attachment support, `gmail-node-mailer` allows you to include files in your emails. Here's how you can attach a PDF file to an email:
+
+```typescript
+import { GmailMailer } from 'gmail-node-mailer';
+
+async function sendEmailWithAttachment() {
+    const mailer = new GmailMailer();
+    await mailer.initializeClient({
+        gmailSenderEmail: 'example@your-domain.com',
+        gmailServiceAccountPath: './path/to/your-service-account.json',
+    });
+
+    const attachments = [{
+        filename: 'Invoice.pdf',
+        mimeType: 'application/pdf',
+        content: 'base64_encoded_content_here'
+    }];
+
+    await mailer.sendEmail({
+        senderEmail: 'example@your-domain.com',
+        recipientEmail: 'customer@example.com',
+        subject: 'Your Invoice',
+        message: 'Please find attached your invoice.',
+        attachments: attachments
+    });
+}
+
+sendEmailWithAttachment().catch(console.error);
+```
+
 
 ### Server Start/Stop Notifications
 

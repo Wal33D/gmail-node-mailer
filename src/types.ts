@@ -1,11 +1,40 @@
 import { google } from 'googleapis';
 
+// Interface for attachment details in an email
 export interface IAttachment {
     filename: string;
     mimeType: string;
     content: string;
 }
 
+// Interface for service account details used for Gmail API authentication
+export interface IGmailServiceAccount {
+    private_key: string;
+    client_email: string;
+}
+
+// Interface for parameters required to initialize the Gmail client
+export interface IInitializeClientParams {
+    gmailServiceAccount?: IGmailServiceAccount;
+    gmailServiceAccountPath?: string;
+    gmailSenderEmail?: string;
+}
+
+// Interface for the result of initializing the Gmail client
+export interface IInitializeClientResult {
+    status: boolean;
+    gmailClient: typeof google.gmail_v1.Gmail | null;
+    message: string;
+}
+
+// Interface for the response from the email sending function
+export interface ISendEmailFunctionResponse {
+    sent: boolean;
+    message: string;
+    gmailResponse: any;
+}
+
+// Interface for parameters required to send an email via Gmail API
 export interface ISendEmailParams {
     recipientEmail: string;
     senderEmail?: string;
@@ -14,6 +43,7 @@ export interface ISendEmailParams {
     attachments?: IAttachment[];
 }
 
+// Interface for the response received after sending an email via Gmail API
 export interface ISendEmailResponse {
     sent: boolean;
     status: number | null;
@@ -22,25 +52,3 @@ export interface ISendEmailResponse {
     message: string;
     gmailResponse: any | null;
 };
-
-export interface IInitializeClientParams {
-    gmailServiceAccount?: IGmailServiceAccount;
-    gmailServiceAccountPath?: string;
-    gmailSenderEmail?: string;
-}
-
-export interface IInitializeClientResult {
-    status: boolean;
-    gmailClient: typeof google.gmail_v1.Gmail | null;
-    message: string;
-}
-export interface IGmailServiceAccount {
-    private_key: string;
-    client_email: string;
-}
-
-export interface ISendEmailFunctionResponse {
-    sent: boolean;
-    message: string;
-    gmailResponse: any;
-}
