@@ -1,9 +1,3 @@
-import { gmail_v1 } from 'googleapis';
-import { isHtmlMessage } from '../utils/isHtmlMessage';
-import { encodeEmailSubject } from '../utils/encodeSubject';
-import { encodeMimeMessageToBase64Url } from '../utils/encodeMimeMessageToBase64Url';
-import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
-
 /**
  * This function sends an email using the Gmail API with optional HTML content and attachments.
  * It constructs a MIME message based on whether there are attachments and whether the message is HTML.
@@ -12,12 +6,16 @@ import { ISendEmailParams, ISendEmailFunctionResponse } from '../types';
  * @param {ISendEmailParams} params - The email parameters, including sender, recipient, subject, message, and optional attachments.
  * @returns {Promise<ISendEmailFunctionResponse>} - The result of the email sending operation, indicating whether the email was successfully sent and the response from Gmail.
  */
+
+import { gmail_v1 } from 'googleapis';
+import { detectHtml } from '../utils/detectHtml';
+import { encodeEmailContent } from '../utils/encodeEmailContent';
+import { ISendEmailParams, ISendEmailFunctionResponse, EncodingType } from '../types';
+
 export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message, attachments }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     try {
-        // Use 'No Subject' if no subject is provided
-        const effectiveSubject = subject || 'No Subject';
-        const { encodedSubject } = encodeEmailSubject({ subjectLine: effectiveSubject });
-        const { status: isHtml } = isHtmlMessage({ message });
+        const { encodedContent: encodedSubject } = encodeEmailContent({ content: subject || '', type: EncodingType.Subject });
+        const { isHtml } = detectHtml({ content: message });
 
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
         let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
@@ -50,7 +48,7 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEma
         // Close the MIME message
         mimeMessage += `--${boundary}--`;
 
-        const { isEncoded, encodedContent } = encodeMimeMessageToBase64Url({ mimeMessage });
+        const { encodedContent, isEncoded } = encodeEmailContent({ content: mimeMessage, type: EncodingType.MimeMessage });
 
         if (!isEncoded || !encodedContent) {
             throw new Error('Failed to encode MIME message.');

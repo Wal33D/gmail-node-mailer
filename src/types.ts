@@ -52,3 +52,23 @@ export interface ISendEmailResponse {
     message: string;
     gmailResponse: any | null;
 };
+
+// Enum defining the types of encoding applicable to email components.
+export enum EncodingType {
+    Subject = 'subject',
+    MimeMessage = 'mimeMessage',
+    Attachment = 'attachment'
+}
+
+// Represents the parameters required for encoding email content.
+export interface IEncodeEmailContentParams {
+    content: string;
+    type: EncodingType;
+}
+
+// Represents the response from encoding email content.
+export interface IEncodeEmailContentResponse {
+    isEncoded: boolean;
+    encodedContent: string;
+    message: string;
+}

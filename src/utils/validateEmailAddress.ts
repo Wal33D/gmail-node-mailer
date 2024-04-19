@@ -10,15 +10,13 @@
  * @returns {{ status: boolean, result: boolean | null }} Object containing the status of the operation
  * and the result of the email validation.
  */
-export function isValidEmail({ email }: { email: string }): { status: boolean, result: boolean | null } {
-    let status = false;
+export function validateEmailAddress({ email }: { email: string }): { status: boolean; result: boolean | null }{
+    let status = true;
     let result: boolean | null = null;
     try {
-        // Modified regex pattern for basic email validation
         // This pattern is designed to reduce complexity and minimize the risk of exponential backtracking
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         result = emailRegex.test(email);
-        status = true; // Operation succeeded
     } catch (error: any) {
         console.error("Error validating email:", error.message);
         result = false; // Explicitly setting result to false in case of error

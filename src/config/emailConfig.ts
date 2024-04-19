@@ -1,4 +1,4 @@
-import { isValidEmail } from './isValidEmail';
+import { validateEmailAddress } from '../utils/validateEmailAddress';
 
 /**
  * Manages the configuration for the Gmail sender's email.
@@ -21,7 +21,7 @@ class EmailConfig {
      */
     setGmailSenderEmail(email: string | undefined) {
         if (email) {
-            const validation = isValidEmail({ email }); 
+            const validation = validateEmailAddress({ email }); 
             if (!validation.status || !validation.result) { 
                 throw new Error("The provided Gmail sender's email is invalid.");
             }

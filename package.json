@@ -1,11 +1,12 @@
 {
   "name": "gmail-node-mailer",
   "version": "1.8.5",
-  "description": "gmail-node-mailer is a Node.js library for easy email sending via the Gmail API, featuring quick setup, HTML/plain text support, and dynamic configuration for streamlined email integration.",
+  "description": "gmail-node-mailer is a Node.js library for easy email sending via the Gmail API, featuring quick setup, HTML/plain text support, dynamic configuration for streamlined email integration, and now with support for attachments.",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "clean": "rimraf dist/* --glob"
   },
   "keywords": [
     "ejs",
@@ -32,6 +33,7 @@
     "@types/mocha": "^10.0.6",
     "dotenv": "^16.4.5",
     "jest": "^29.7.0",
+    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.2"
   },

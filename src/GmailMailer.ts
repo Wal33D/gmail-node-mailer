@@ -1,18 +1,3 @@
-import { google, gmail_v1 } from 'googleapis';
-import { sendEmailFunction } from './functions/sendEmail';
-import { isValidEmail } from './utils/isValidEmail';
-import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
-import { emailConfig } from './utils/emailConfig';
-import { gmailServiceAccountConfig } from './utils/gmailServiceAccountConfig';
-import { generateErrorResponse } from './utils/generateErrorResponse';
-import {
-  IInitializeClientParams,
-  IInitializeClientResult,
-  ISendEmailFunctionResponse,
-  ISendEmailParams,
-  ISendEmailResponse
-} from './types';
-
 /**
  * The GmailMailer class encapsulates methods for initializing a Gmail API client and sending emails through it.
  * It handles authentication via service account credentials and provides a method to send emails with optional attachments.
@@ -40,6 +25,21 @@ import {
  *
  * This class simplifies handling Gmail interactions and abstracts the complexities of direct API management from the user.
  */
+import { emailConfig } from './config/emailConfig';
+import { google, gmail_v1 } from 'googleapis';
+import { sendEmailFunction } from './functions/sendEmail';
+import { validateEmailAddress } from './utils/validateEmailAddress';
+import { generateErrorResponse } from './utils/generateErrorResponse';
+import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
+import { gmailServiceAccountConfig } from './config/gmailServiceAccountConfig';
+import {
+  ISendEmailParams,
+  ISendEmailResponse,
+  IInitializeClientParams,
+  IInitializeClientResult,
+  ISendEmailFunctionResponse,
+} from './types';
+
 export class GmailMailer {
   private gmailClient: gmail_v1.Gmail | null = null;
 
@@ -53,7 +53,7 @@ export class GmailMailer {
     gmailSenderEmail = emailConfig.getGmailSenderEmail(),
   }: IInitializeClientParams): Promise<IInitializeClientResult> {
     try {
-      if (!gmailSenderEmail || !isValidEmail({ email: gmailSenderEmail }).result) {
+      if (!gmailSenderEmail || !validateEmailAddress({ email: gmailSenderEmail }).result) {
         throw new Error("Invalid or missing Gmail sender's email.");
       }
 
