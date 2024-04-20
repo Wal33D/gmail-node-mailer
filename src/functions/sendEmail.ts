@@ -1,10 +1,51 @@
 /**
- * This function sends an email using the Gmail API with optional HTML content and attachments.
- * It constructs a MIME message based on whether there are attachments and whether the message is HTML.
+ * Constructs and sends an email through the Gmail API, accommodating optional HTML content and file attachments.
+ * This lower-level function is designed to be called by the `sendEmail` function, which performs initial validations 
+ * and setups. It dynamically constructs a MIME (Multipurpose Internet Mail Extensions) message, adjusting the 
+ * structure based on the presence of HTML content and attachments to ensure compatibility with various email client standards.
  *
- * @param {gmail_v1.Gmail} gmailClient - The Gmail client used to send the email.
- * @param {ISendEmailParams} params - The email parameters, including sender, recipient, subject, message, and optional attachments.
- * @returns {Promise<ISendEmailFunctionResponse>} - The result of the email sending operation, indicating whether the email was successfully sent and the response from Gmail.
+ * The function supports both plain text and HTML emails, and can manage multiple attachments. It handles the encoding 
+ * for subjects and the email body to support a wide range of characters beyond basic ASCII, including UTF-8 characters.
+ *
+ * ### Function Parameters:
+ * - `gmailClient` (gmail_v1.Gmail): The authenticated Gmail client instance from the Google API library. This client
+ *   is used to send the email.
+ * - `params` (ISendEmailParams): Object containing all necessary data for sending an email:
+ *   - `senderEmail` (string): The email address of the sender.
+ *   - `recipientEmail` (string): The email address of the recipient.
+ *   - `subject` (string): The subject of the email. Defaults to an empty string if not provided.
+ *   - `message` (string): The main content of the email, can be plain text or HTML.
+ *   - `attachments` (IAttachment[]): Optional array of attachment objects, each containing a `filename`, `mimeType`,
+ *     and `content` encoded in base64.
+ *
+ * ### Return Value:
+ * Returns a Promise that resolves to an `ISendEmailFunctionResponse` object, which includes:
+ * - `sent` (boolean): Indicates whether the email was successfully sent.
+ * - `message` (string): A message describing the result of the send operation, useful for logging and user feedback.
+ * - `gmailResponse` (any): The raw response from the Gmail API, providing detailed success or error information.
+ *
+ * ### Errors:
+ * The function captures and handles errors internally, focusing on encoding issues or API failures. It returns a 
+ * structured error response in case of failure.
+ *
+ * ### Example Usage:
+ * ```javascript
+ * const emailParams = {
+ *   senderEmail: 'sender@example.com',
+ *   recipientEmail: 'recipient@example.com',
+ *   subject: 'Test Email',
+ *   message: '<h1>Hello World!</h1>',
+ *   attachments: [
+ *     { filename: 'test.txt', mimeType: 'text/plain', content: 'Base 64 Encoded File Content, i.e. SGVsbG8gd29ybGQh...' }
+ *   ]
+ * };
+ *
+ * const response = await sendEmailFunction(gmailClient, emailParams);
+ * console.log(response.message);
+ * ```
+ *
+ * This function is a critical component of an email sending pipeline, designed for robust and flexible email generation,
+ * suitable for a variety of scenarios from simple notifications to complex newsletters with multiple attachments.
  */
 
 import { gmail_v1 } from 'googleapis';
