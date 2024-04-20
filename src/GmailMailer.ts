@@ -108,54 +108,53 @@ export class GmailMailer {
     }
   }
 
-/**
- * This function orchestrates the sending of an email using a pre-initialized Gmail API client. It includes several
- * pre-send checks to ensure the integrity and completeness of the email to be sent. These checks include validating
- * the initialization of the Gmail client, ensuring a sender email is set, verifying the presence of a message body,
- * and providing a default subject if none is provided.
- *
- * The function is designed to be robust, logging errors and generating appropriate error responses for various
- * failure scenarios before attempting to send the email. If all checks are passed, it delegates to the
- * `sendEmailFunction` to perform the actual email sending operation.
- *
- * ### Parameters:
- * - `params` (ISendEmailParams): Object containing the necessary parameters to construct and send an email:
- *   - `senderEmail` (string, optional): The email address of the sender. Defaults to a configured sender email if not provided.
- *   - `recipientEmail` (string): The email address of the recipient.
- *   - `subject` (string, optional): The subject of the email. Defaults to 'No Subject' if omitted.
- *   - `message` (string): The main content of the email, which can be either plain text or HTML formatted.
- *   - `attachments` (array of IAttachment, optional): An array of attachment objects. Each attachment should have a `filename`,
- *     `mimeType`, and `content` encoded in base64.
- *
- * ### Returns:
- * A `Promise<ISendEmailResponse>` that resolves to an object indicating the outcome of the email sending operation. This object
- * includes the following properties:
- * - `sent` (boolean): Indicates whether the email was sent successfully.
- * - `status` (number, nullable): The HTTP status code returned by the Gmail API, if available.
- * - `statusText` (string, nullable): A textual description of the HTTP status, if available.
- * - `responseUrl` (string, nullable): The URL of the Gmail API response, if available.
- * - `message` (string): A message describing the result of the email operation, useful for debugging and user feedback.
- * - `gmailResponse` (any, nullable): The raw response payload from the Gmail API, providing detailed success or error information.
- *
- * ### Example Usage:
- * ```javascript
- * const emailParams = {
- *   senderEmail: 'sender@example.com',
- *   recipientEmail: 'recipient@example.com',
- *   subject: 'Welcome!',
- *   message: '<p>Thank you for joining us!</p>',
- *   attachments: [
- *     { filename: 'welcome.pdf', mimeType: 'application/pdf', content: 'base64-encoded-content' }
- *   ]
- * };
- *
- * const response = await sendEmail(emailParams);
- * console.log(response.message);
- * ```
- *
- * This function is essential for applications that require reliable email delivery such as customer support systems,
- * automated notification services, or marketing email delivery systems.
- */
+  /**
+   * Orchestrates the process of sending an email by performing preliminary checks and then delegating the email 
+   * construction and sending tasks to `sendEmailFunction`. This function ensures that the necessary conditions are met 
+   * before attempting to send an email, including checking the initialization of the Gmail client, verifying the 
+   * presence of a sender email, and ensuring that the message content is not empty. It also sets a default subject 
+   * if none is provided.
+   *
+   * This high-level function is responsible for handling initial validations and configurations, making it an integral 
+   * part of an email delivery system that requires robustness and reliability, particularly in environments such as 
+   * customer support systems, automated notifications, or marketing campaigns.
+   *
+   * ### Parameters:
+   * - `params` (ISendEmailParams): Contains the parameters required to send an email:
+   *   - `senderEmail` (string, optional): Email address of the sender. Defaults to a pre-configured sender email if not provided.
+   *   - `recipientEmail` (string): Email address of the recipient.
+   *   - `subject` (string, optional): Subject of the email. Defaults to 'No Subject' if omitted.
+   *   - `message` (string): Main content of the email, can be plain text or HTML formatted.
+   *   - `attachments` (IAttachment[], optional): Array of attachments, each with a filename, mimeType, and base64-encoded content.
+   *
+   * ### Returns:
+   * A `Promise<ISendEmailResponse>` that resolves to an object detailing the success or failure of the email operation:
+   * - `sent` (boolean): Indicates whether the email was sent successfully.
+   * - `status` (number, nullable): HTTP status code from the Gmail API, if available.
+   * - `statusText` (string, nullable): Descriptive text corresponding to the HTTP status.
+   * - `responseUrl` (string, nullable): URL of the Gmail API response, if available.
+   * - `message` (string): Descriptive message about the outcome of the email operation.
+   * - `gmailResponse` (any, nullable): Raw response payload from the Gmail API.
+   *
+   * ### Example Usage:
+   * ```javascript
+   * const emailParams = {
+   *   senderEmail: 'sender@example.com',
+   *   recipientEmail: 'recipient@example.com',
+   *   subject: 'Welcome!',
+   *   message: '<p>Thank you for joining us!</p>',
+   *   attachments: [
+   *     { filename: 'welcome.pdf', mimeType: 'application/pdf', content: 'base64-encoded-content' }
+   *   ]
+   * };
+   *
+   * const response = await sendEmail(emailParams);
+   * console.log(response.message);
+   * ```
+   *
+   * This function acts as a gateway, ensuring that all prerequisites are met before the email is sent, thus 
+   * maintaining the integrity and reliability of the email sending process within your application.
+   */
 
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
