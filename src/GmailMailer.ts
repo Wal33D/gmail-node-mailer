@@ -177,6 +177,11 @@ export class GmailMailer {
       params.subject = 'No Subject';
     }
 
+    if (!params.senderName) {
+      const domainPart = senderEmail.substring(senderEmail.lastIndexOf("@") + 1);
+      params.senderName = domainPart.substring(0, domainPart.lastIndexOf("."));
+    }
+
     const adjustedParams = { ...params, senderEmail };
 
     const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);

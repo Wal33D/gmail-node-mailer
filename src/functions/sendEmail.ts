@@ -53,15 +53,17 @@ import { detectHtml } from '../utils/detectHtml';
 import { encodeEmailContent } from '../utils/encodeEmailContent';
 import { ISendEmailParams, ISendEmailFunctionResponse, EncodingType } from '../types';
 
-export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, { senderEmail, recipientEmail, subject, message, attachments }: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
+export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
+    const { senderEmail, senderName, recipientEmail, subject, message, attachments } = params;
     try {
         const { encodedContent: encodedSubject } = encodeEmailContent({ content: subject || '', type: EncodingType.Subject });
         const { isHtml } = detectHtml({ content: message });
 
         let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
-        let mimeMessage = `From: ${senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
+        // Conditionally add senderName to the From header
+        let mimeMessage = `From: ${senderName ? `"${senderName}" <${senderEmail}>` : senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
-        // Define the top level MIME type based on whether there are attachments
+        // Define the top level MIME type
         mimeMessage += `Content-Type: ${attachments && attachments.length > 0 ? "multipart/mixed" : "multipart/alternative"}; boundary=${boundary}\r\n\r\n`;
 
         // Add the main message part (HTML or plain text)
