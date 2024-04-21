@@ -1,4 +1,4 @@
-import { IGmailServiceAccount } from '../types';
+import { IGmailServiceAccount } from '../types/types';
 
 /**
  * Manages configuration for the Gmail service account.

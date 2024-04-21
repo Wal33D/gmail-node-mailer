@@ -1,4 +1,4 @@
-import { ISendEmailResponse } from '../types';
+import { ISendEmailResponse } from '../types/types';
 
 /**
  * Generates a default error response for the sendEmail method.

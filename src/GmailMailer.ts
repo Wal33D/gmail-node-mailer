@@ -32,13 +32,7 @@ import { validateEmailAddress } from './utils/validateEmailAddress';
 import { generateErrorResponse } from './utils/generateErrorResponse';
 import { parseServiceAccountFile } from './utils/parseServiceAccountFile';
 import { gmailServiceAccountConfig } from './config/gmailServiceAccountConfig';
-import {
-  ISendEmailParams,
-  ISendEmailResponse,
-  IInitializeClientParams,
-  IInitializeClientResult,
-  ISendEmailFunctionResponse,
-} from './types';
+import { ISendEmailParams, ISendEmailResponse, ISendEmailFunctionResponse, IInitializeClientParams, IInitializeClientResult } from './types/types';
 
 export class GmailMailer {
   private gmailClient: gmail_v1.Gmail | null = null;
@@ -163,29 +157,34 @@ export class GmailMailer {
 
     const senderEmail = params.senderEmail || emailConfig.getGmailSenderEmail();
     if (!senderEmail) {
-      console.error('Sender email not configured. Please provide a sender email.')
+      console.error('Sender email not configured. Please provide a sender email.');
       return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
     }
 
     if (!params.message) {
-      console.error('At least one of textMessage or htmlMessage must be provided.')
+      console.error('At least one of textMessage or htmlMessage must be provided.');
       return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
     }
 
     if (!params.subject) {
       console.error(`No subject provided for the email to ${params.recipientEmail}.`);
-      params.subject = 'No Subject';
+      params.subject = 'No Subject';  // Default subject if none provided
     }
 
+    // Generate sender name from email if not provided
     if (!params.senderName) {
       const domainPart = senderEmail.substring(senderEmail.lastIndexOf("@") + 1);
-      params.senderName = domainPart.substring(0, domainPart.lastIndexOf("."));
+      const rawSenderName = domainPart.substring(0, domainPart.indexOf('.')); // Fixes to use indexOf
+      params.senderName = rawSenderName.charAt(0).toUpperCase() + rawSenderName.slice(1); // Properly concatenates the rest of the name
     }
 
+    // Adjust parameters including senderEmail and possibly modified params such as senderName
     const adjustedParams = { ...params, senderEmail };
 
+    // Call the lower-level sendEmailFunction to actually send the email
     const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
 
+    // Handle the response based on the sending result
     if (!sendResult.sent) {
       return generateErrorResponse({ message: sendResult.message });
     } else {
@@ -199,5 +198,4 @@ export class GmailMailer {
       };
     }
   }
-
 }

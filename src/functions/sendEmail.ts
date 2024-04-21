@@ -51,7 +51,7 @@
 import { gmail_v1 } from 'googleapis';
 import { detectHtml } from '../utils/detectHtml';
 import { encodeEmailContent } from '../utils/encodeEmailContent';
-import { ISendEmailParams, ISendEmailFunctionResponse, EncodingType } from '../types';
+import { ISendEmailParams, ISendEmailFunctionResponse, EncodingType } from '../types/types';
 
 export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISendEmailParams): Promise<ISendEmailFunctionResponse> {
     const { senderEmail, senderName, recipientEmail, subject, message, attachments } = params;
