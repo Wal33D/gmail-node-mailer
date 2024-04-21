@@ -38,7 +38,7 @@ import {
   IInitializeClientParams,
   IInitializeClientResult,
   ISendEmailFunctionResponse,
-} from './types/types';
+} from './types';
 
 export class GmailMailer {
   private gmailClient: gmail_v1.Gmail | null = null;

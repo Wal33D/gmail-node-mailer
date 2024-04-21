@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { EncodingType, IEncodeEmailContentParams, IEncodeEmailContentResponse } from '../types/types';
+import { EncodingType, IEncodeEmailContentParams, IEncodeEmailContentResponse } from '../types';
 
 /**
  * Encodes various types of content related to emails into Base64 or URL-safe Base64 formats.

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { promises as fsPromises } from 'fs';
-import { IGmailServiceAccount } from '../types/types';
+import { IGmailServiceAccount } from '../types';
 
 /**
  * Checks if the provided error object has a `code` property.
