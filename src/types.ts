@@ -38,6 +38,7 @@ export interface ISendEmailFunctionResponse {
 export interface ISendEmailParams {
     recipientEmail: string;
     senderEmail?: string;
+    senderName?: string;  // Optional sender display name
     subject?: string;
     message: string;
     attachments?: IAttachment[];
