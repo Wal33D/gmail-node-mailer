@@ -77,4 +77,4 @@ Access the predefined routes via your web browser or API tool to send different 
   # or
   npm run clean
   ```
-![Demo Server](https://github.com/Wal33D/gmail-node-mailer-example-server/raw/main/images/demoServer.png "This Server")
+![Demo Server](https://github.com/Wal33D/gmail-node-mailer-example-server/blob/master/demoServer.png "This Server")
