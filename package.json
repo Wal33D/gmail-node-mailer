@@ -39,13 +39,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/our-node-packages/gmail-node-mailer.git"
+    "url": "https://github.com/Wal33d/gmail-node-mailer.git"
   },
   "bugs": {
-    "url": "https://github.com/our-node-packages/gmail-node-mailer/issues"
+    "url": "https://github.com/Wal33d/gmail-node-mailer/issues"
   },
-  "homepage": "https://github.com/our-node-packages/gmail-node-mailer",
+  "homepage": "https://github.com/Wal33d/gmail-node-mailer",
   "publishConfig": {
-    "@our-node-packages:registry": "https://npm.pkg.github.com/our-node-packages"
+    "@Wal33d:registry": "https://npm.pkg.github.com/Wal33d"
   }
 }
