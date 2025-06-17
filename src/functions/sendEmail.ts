@@ -59,7 +59,7 @@ export async function sendEmailFunction(gmailClient: gmail_v1.Gmail, params: ISe
         const { encodedContent: encodedSubject } = encodeEmailContent({ content: subject || '', type: EncodingType.Subject });
         const { isHtml } = detectHtml({ content: message });
 
-        let boundary = "----=_NextPart_" + Math.random().toString(36).substr(2, 9);
+        let boundary = "----=_NextPart_" + Math.random().toString(36).substring(2, 11);
         // Conditionally add senderName to the From header
         let mimeMessage = `From: ${senderName ? `"${senderName}" <${senderEmail}>` : senderEmail}\r\nTo: ${recipientEmail}\r\nSubject: ${encodedSubject}\r\n`;
 
