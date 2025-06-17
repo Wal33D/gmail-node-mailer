@@ -210,11 +210,14 @@ Specify and validate a default sender email address:
 
 ```typescript
 import { emailConfig } from 'gmail-node-mailer/utils/emailConfig';
+import { validateEmailAddress } from 'gmail-node-mailer/utils/validateEmailAddress';
 
-// Set and validate the Gmail sender's email, or optionally declare the the GMAIL_MAILER_SENDER_EMAIL in your .env file 
+// Set and validate the Gmail sender's email, or optionally declare the GMAIL_MAILER_SENDER_EMAIL in your .env file
 emailConfig.setGmailSenderEmail('your-email@gmail.com');
 
-if (!emailConfig.validateEmailFormat('your-email@gmail.com')) {
+const { status, result } = validateEmailAddress({ email: 'your-email@gmail.com' });
+
+if (!status || !result) {
     console.error('Email format is invalid. Please use a valid Gmail address.');
 } else {
     console.log('Sender email configured successfully.');
