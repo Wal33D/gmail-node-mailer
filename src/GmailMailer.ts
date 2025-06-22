@@ -38,6 +38,7 @@ import {
   IInitializeClientParams,
   IInitializeClientResult,
   ISendEmailFunctionResponse,
+  IParseServiceAccountResult,
 } from './types';
 
 export class GmailMailer {
@@ -63,7 +64,7 @@ export class GmailMailer {
       }
 
       if (!gmailServiceAccount && gmailServiceAccountPath) {
-        const serviceAccountResult = await parseServiceAccountFile({
+        const serviceAccountResult: IParseServiceAccountResult = await parseServiceAccountFile({
           filePath: gmailServiceAccountPath,
         });
         if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
