@@ -20,47 +20,53 @@ import { EncodingType, IEncodeEmailContentParams, IEncodeEmailContentResponse } 
  *    - `message`: A description of the outcome or error message if an error occurred.
  */
 
-export function encodeEmailContent({ content, type }: IEncodeEmailContentParams): IEncodeEmailContentResponse {
-    let encodedContent = content;
-    let message = '';
-    const base64Pattern = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
+export function encodeEmailContent({
+  content,
+  type,
+}: IEncodeEmailContentParams): IEncodeEmailContentResponse {
+  let encodedContent = content;
+  let message = '';
+  const base64Pattern = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
-    try {
-        switch (type) {
-            case EncodingType.Subject:
-                if (!content) {
-                    content = 'No Subject';  // Default subject if none provided
-                }
-                encodedContent = `=?utf-8?B?${Buffer.from(content, 'utf-8').toString('base64')}?=`;
-                message = 'Email subject encoded successfully.';
-                break;
-            case EncodingType.MimeMessage:
-                encodedContent = Buffer.from(content, 'utf-8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_');
-                message = 'MIME message encoded successfully.';
-                break;
-            case EncodingType.Attachment:
-                if (!base64Pattern.test(content)) {
-                    encodedContent = Buffer.from(content, 'utf-8').toString('base64');
-                    message = 'Attachment content encoded successfully.';
-                } else {
-                    message = 'Attachment content was already Base64 encoded.';
-                }
-                break;
-            default:
-                throw new Error('Invalid encoding type specified.');
+  try {
+    switch (type) {
+      case EncodingType.Subject:
+        if (!content) {
+          content = 'No Subject'; // Default subject if none provided
         }
-    } catch (error: any) {
-        console.error(`Error encoding ${type}:`, error.message);
-        return {
-            isEncoded: false,
-            encodedContent: content,  // Return original content on error
-            message: `Error during encoding: ${error.message}`
-        };
+        encodedContent = `=?utf-8?B?${Buffer.from(content, 'utf-8').toString('base64')}?=`;
+        message = 'Email subject encoded successfully.';
+        break;
+      case EncodingType.MimeMessage:
+        encodedContent = Buffer.from(content, 'utf-8')
+          .toString('base64')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_');
+        message = 'MIME message encoded successfully.';
+        break;
+      case EncodingType.Attachment:
+        if (!base64Pattern.test(content)) {
+          encodedContent = Buffer.from(content, 'utf-8').toString('base64');
+          message = 'Attachment content encoded successfully.';
+        } else {
+          message = 'Attachment content was already Base64 encoded.';
+        }
+        break;
+      default:
+        throw new Error('Invalid encoding type specified.');
     }
-
+  } catch (error: any) {
+    console.error(`Error encoding ${type}:`, error.message);
     return {
-        isEncoded: true,
-        encodedContent,
-        message
+      isEncoded: false,
+      encodedContent: content, // Return original content on error
+      message: `Error during encoding: ${error.message}`,
     };
+  }
+
+  return {
+    isEncoded: true,
+    encodedContent,
+    message,
+  };
 }
