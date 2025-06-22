@@ -13,6 +13,10 @@ Simplify your email sending process within Node.js applications with `gmail-node
 - 🔧 Easy configuration for service accounts and sender emails.
 - 📎 **New Functionality: Attachment Support** - Send attachments with your emails effortlessly.
 
+## Requirements
+
+- Node.js **14** or newer
+
 ## Get Started in Seconds
 
 ### 1. Install with NPM
@@ -279,6 +283,16 @@ Configure the following optional environment variables for detailed control over
   ```
   **Note**: Verify that the specified path is accurate, relative to your project's root directory.
 
+### Sample `.env`
+
+```env
+GMAIL_MAILER_SENDER_EMAIL=sender@example.com
+# Path to your local service account JSON
+GMAIL_MAILER_SERVICE_ACCOUNT_PATH=./path/to/service-account.json
+# Or provide the service account JSON directly
+# GMAIL_MAILER_SERVICE_ACCOUNT={"type":"service_account",...}
+```
+
 ## Additional Information and Examples
 
 For more detailed information on configuring `gmail-node-mailer`, including setting up environment variables, sample code, please refer to the following documents in the `/info` directory:
@@ -292,3 +306,7 @@ For more detailed information on configuring `gmail-node-mailer`, including sett
 - [Server Notifications Example](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/server-notifications-example.md): A detailed example on setting up server start/stop notifications using `gmail-node-mailer`.
 
 - [Service Account Setup](https://github.com/our-node-packages/gmail-node-mailer/blob/master/info/service_account_setup.md): Step-by-step instructions on setting up a Gmail service account for use with `gmail-node-mailer`.
+
+## License
+
+This project is licensed under the [GNU Lesser General Public License v3.0](LICENSE).
