@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { promises as fsPromises } from 'fs';
-import { IGmailServiceAccount } from '../types';
+import { IGmailServiceAccount, IParseServiceAccountResult } from '../types';
 
 /**
  * Checks if the provided error object has a `code` property.
@@ -16,14 +16,10 @@ function hasErrorCode(error: any): error is NodeJS.ErrnoException {
  *
  * @param {Object} params - Parameters for parsing the service account file.
  * @param {string} params.filePath - The file path of the service account JSON file.
- * @returns {Promise<{status: boolean, serviceAccount: IGmailServiceAccount | undefined, message: string}>}
+ * @returns {Promise<IParseServiceAccountResult>}
  *          The result of parsing the service account file, including status, the service account object (if successful), and a message.
  */
-export async function parseServiceAccountFile({ filePath }: { filePath: string }): Promise<{
-  status: boolean;
-  serviceAccount: IGmailServiceAccount | undefined;
-  message: string;
-}> {
+export async function parseServiceAccountFile({ filePath }: { filePath: string }): Promise<IParseServiceAccountResult> {
   try {
     const absolutePath = path.resolve(filePath);
     const fileContents = await fsPromises.readFile(absolutePath, 'utf-8');

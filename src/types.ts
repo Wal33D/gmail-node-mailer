@@ -13,6 +13,13 @@ export interface IGmailServiceAccount {
   client_email: string;
 }
 
+// Interface for the result of parsing a service account file
+export interface IParseServiceAccountResult {
+  status: boolean;
+  serviceAccount: IGmailServiceAccount | undefined;
+  message: string;
+}
+
 // Interface for parameters required to initialize the Gmail client
 export interface IInitializeClientParams {
   gmailServiceAccount?: IGmailServiceAccount;
