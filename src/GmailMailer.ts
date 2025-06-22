@@ -63,7 +63,9 @@ export class GmailMailer {
       }
 
       if (!gmailServiceAccount && gmailServiceAccountPath) {
-        const serviceAccountResult = await parseServiceAccountFile({ filePath: gmailServiceAccountPath });
+        const serviceAccountResult = await parseServiceAccountFile({
+          filePath: gmailServiceAccountPath,
+        });
         if (!serviceAccountResult.status || !serviceAccountResult.serviceAccount) {
           throw new Error(serviceAccountResult.message);
         }
@@ -74,13 +76,15 @@ export class GmailMailer {
       if (!gmailServiceAccount && process.env.GMAIL_MAILER_SERVICE_ACCOUNT) {
         try {
           gmailServiceAccount = JSON.parse(process.env.GMAIL_MAILER_SERVICE_ACCOUNT);
-        } catch (error) {
-          throw new Error("Failed to parse service account from GMAIL_MAILER_SERVICE_ACCOUNT environment variable.");
+        } catch (_error) {
+          throw new Error(
+            'Failed to parse service account from GMAIL_MAILER_SERVICE_ACCOUNT environment variable.',
+          );
         }
       }
 
       if (!gmailServiceAccount) {
-        throw new Error("Service account configuration is missing.");
+        throw new Error('Service account configuration is missing.');
       }
 
       const jwtClient = new google.auth.JWT(
@@ -97,26 +101,26 @@ export class GmailMailer {
       return {
         status: true,
         gmailClient: this.gmailClient,
-        message: "Gmail API client initialized successfully."
+        message: 'Gmail API client initialized successfully.',
       };
     } catch (error: any) {
       return {
         status: false,
         gmailClient: null,
-        message: `Initialization failed: ${error.message}`
+        message: `Initialization failed: ${error.message}`,
       };
     }
   }
 
   /**
-   * Orchestrates the process of sending an email by performing preliminary checks and then delegating the email 
-   * construction and sending tasks to `sendEmailFunction`. This function ensures that the necessary conditions are met 
-   * before attempting to send an email, including checking the initialization of the Gmail client, verifying the 
-   * presence of a sender email, and ensuring that the message content is not empty. It also sets a default subject 
+   * Orchestrates the process of sending an email by performing preliminary checks and then delegating the email
+   * construction and sending tasks to `sendEmailFunction`. This function ensures that the necessary conditions are met
+   * before attempting to send an email, including checking the initialization of the Gmail client, verifying the
+   * presence of a sender email, and ensuring that the message content is not empty. It also sets a default subject
    * if none is provided.
    *
-   * This high-level function is responsible for handling initial validations and configurations, making it an integral 
-   * part of an email delivery system that requires robustness and reliability, particularly in environments such as 
+   * This high-level function is responsible for handling initial validations and configurations, making it an integral
+   * part of an email delivery system that requires robustness and reliability, particularly in environments such as
    * customer support systems, automated notifications, or marketing campaigns.
    *
    * ### Parameters:
@@ -152,24 +156,30 @@ export class GmailMailer {
    * console.log(response.message);
    * ```
    *
-   * This function acts as a gateway, ensuring that all prerequisites are met before the email is sent, thus 
+   * This function acts as a gateway, ensuring that all prerequisites are met before the email is sent, thus
    * maintaining the integrity and reliability of the email sending process within your application.
    */
 
   async sendEmail(params: ISendEmailParams): Promise<ISendEmailResponse> {
     if (!this.gmailClient) {
-      return generateErrorResponse({ message: 'The Gmail client has not been initialized. Please call initializeClient first.' });
+      return generateErrorResponse({
+        message: 'The Gmail client has not been initialized. Please call initializeClient first.',
+      });
     }
 
     const senderEmail = params.senderEmail || emailConfig.getGmailSenderEmail();
     if (!senderEmail) {
-      console.error('Sender email not configured. Please provide a sender email.')
-      return generateErrorResponse({ message: 'Sender email not configured. Please provide a sender email.' });
+      console.error('Sender email not configured. Please provide a sender email.');
+      return generateErrorResponse({
+        message: 'Sender email not configured. Please provide a sender email.',
+      });
     }
 
     if (!params.message) {
-      console.error('At least one of textMessage or htmlMessage must be provided.')
-      return generateErrorResponse({ message: 'At least one of textMessage or htmlMessage must be provided.' });
+      console.error('At least one of textMessage or htmlMessage must be provided.');
+      return generateErrorResponse({
+        message: 'At least one of textMessage or htmlMessage must be provided.',
+      });
     }
 
     if (!params.subject) {
@@ -179,14 +189,17 @@ export class GmailMailer {
 
     // Generate sender name from email if not provided
     if (!params.senderName) {
-      const domainPart = senderEmail.substring(senderEmail.lastIndexOf("@") + 1);
+      const domainPart = senderEmail.substring(senderEmail.lastIndexOf('@') + 1);
       const rawSenderName = domainPart.substring(0, domainPart.indexOf('.'));
-      params.senderName = rawSenderName.charAt(0).toUpperCase() + rawSenderName.slice(1)
+      params.senderName = rawSenderName.charAt(0).toUpperCase() + rawSenderName.slice(1);
     }
 
     const adjustedParams = { ...params, senderEmail };
 
-    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(this.gmailClient, adjustedParams);
+    const sendResult: ISendEmailFunctionResponse = await sendEmailFunction(
+      this.gmailClient,
+      adjustedParams,
+    );
 
     if (!sendResult.sent) {
       return generateErrorResponse({ message: sendResult.message });
@@ -201,5 +214,4 @@ export class GmailMailer {
       };
     }
   }
-
 }

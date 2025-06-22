@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "clean": "rimraf dist/* --glob"
+    "clean": "rimraf dist/* --glob",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" && prettier --check \"src/**/*.{ts,tsx}\""
   },
   "keywords": [
     "ejs",
@@ -31,8 +32,14 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/mocha": "^10.0.6",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
     "dotenv": "^16.4.5",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.0",
     "jest": "^29.7.0",
+    "prettier": "^3.5.3",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
